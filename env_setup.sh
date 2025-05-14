@@ -1,4 +1,7 @@
-git clone -b branch-25.04 https://github.com/rapidsai/rmm.git
+if [ ! -d "rmm" ]; then
+  echo "rmm does exist."
+  git clone -b branch-25.04 https://github.com/rapidsai/rmm.git
+fi
 cd rmm
 
 if ! (conda info --envs | grep -q rmm_dev); then
