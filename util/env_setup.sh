@@ -1,9 +1,9 @@
-cd src
+cd $HAMMER_ROOT/src
 if [ ! -d "rmm" ]; then
   echo "rmm does exist."
   git clone -b branch-25.04 https://github.com/rapidsai/rmm.git
 fi
-cd rmm
+cd $HAMMER_ROOT/src
 
 if ! (conda info --envs | grep -q rmm_dev); then
     conda env create --name rmm_dev --file conda/environments/all_cuda-128_arch-x86_64.yaml

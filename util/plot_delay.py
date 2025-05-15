@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
-import sys
+import sys, os
 
+HAMMER_ROOT = os.environ['HAMMER_ROOT']
 iteration = int(sys.argv[1])         # 10000
 trefi = int(sys.argv[2])             # 1407
 bank_id = sys.argv[3]           # 1
@@ -15,7 +16,7 @@ def read_file(filename):
     return x_values, z_values
 
 def generate_filename_str(num_agg, bank):
-    return f"log/delay/{num_agg}agg_b{bank}_timing_delay.txt"
+    return f"{HAMMER_ROOT}/src/log/delay/{num_agg}agg_b{bank}_timing_delay.txt"
 
 # Read the data from the files
 for num_agg in [int(x) for x in sys.argv[4:]]:

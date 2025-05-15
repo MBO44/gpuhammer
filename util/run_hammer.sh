@@ -1,6 +1,6 @@
 # Set the first parameter to <Stable Max Clock Rate> reported by run_timing_task.py
 # Set the second parameter to a stable memory clock rate
-bash ./init_cuda.sh 1800 7600
+bash $HAMMER_ROOT/util/init_cuda.sh 1800 7600
 
 # Variables
 bank_id=1
@@ -32,16 +32,16 @@ addr_step=256           # Set to be the <step> parameter used in finding conf_se
 mem_size=50465865728    # Bytes of memory allocated for hammering (recommend: size of memory - 1GB)
 
 # File paths
-mkdir -p ./log/sweep
-rowset_file="./row_sets/ROW_SET_${bank_id}.txt"
-log_file="./log/sweep/${num_agg}agg_b${bank_id}_${vic_pat}${agg_pat}.log"
-bitflip_file="./log/sweep/${num_agg}agg_b${bank_id}_${vic_pat}${agg_pat}_bitflip_count.txt"
+mkdir -p $HAMMER_ROOT/src/log/sweep
+rowset_file="$HAMMER_ROOT/src/row_sets/ROW_SET_${bank_id}.txt"
+log_file="$HAMMER_ROOT/src/log/sweep/${num_agg}agg_b${bank_id}_${vic_pat}${agg_pat}.log"
+bitflip_file="$HAMMER_ROOT/src/log/sweep/${num_agg}agg_b${bank_id}_${vic_pat}${agg_pat}_bitflip_count.txt"
 
 
 # Running the test
 nvidia-smi -q > $log_file
 echo "Start hammering ..."
 
-./out/build/gpu_hammer $rowset_file $((num_agg - 1)) $addr_step $iterations $min_rowid $max_rowid $row_step $skip_step $mem_size $num_warp $num_thread $delay $round $count_iter $num_rows $vic_pat $agg_pat $bitflip_file > $log_file
+$HAMMER_ROOT/src/out/build/gpu_hammer $rowset_file $((num_agg - 1)) $addr_step $iterations $min_rowid $max_rowid $row_step $skip_step $mem_size $num_warp $num_thread $delay $round $count_iter $num_rows $vic_pat $agg_pat $bitflip_file > $log_file
 
 echo "Hammering done."

@@ -2,7 +2,7 @@
 
 # Set the first parameter to <Stable Max Clock Rate> reported by run_timing_task.py
 # Set the second parameter to a stable memory clock rate
-bash ./init_cuda.sh 1800 7600 
+bash $HAMMER_ROOT/util/init_cuda.sh 1800 7600 
 
 
 # Variables
@@ -25,16 +25,16 @@ addr_step=256           # Set to be the <step> parameter used in finding conf_se
 mem_size=50465865728    # Bytes of memory allocated for hammering (recommend: size of memory - 1GB)
 
 # File paths
-mkdir -p ./log/delay
-rowset_file="./row_sets/ROW_SET_${bank_id}.txt"
-time_file="./log/delay/${num_agg}agg_b${bank_id}_timing_delay.txt"
-log_file="./log/delay/${num_agg}agg_b${bank_id}_delay.log"
+mkdir -p $HAMMER_ROOT/src/log/delay
+rowset_file="$HAMMER_ROOT/src/row_sets/ROW_SET_${bank_id}.txt"
+time_file="$HAMMER_ROOT/src/log/delay/${num_agg}agg_b${bank_id}_timing_delay.txt"
+log_file="$HAMMER_ROOT/src/log/delay/${num_agg}agg_b${bank_id}_delay.log"
 
 
 # Running the test
 nvidia-smi -q > $log_file
 echo "Start hammering ..."
 
-./out/build/sync_delay $rowset_file $((num_agg - 1)) $addr_step $iterations $rowid $mem_size $time_file $num_warp $num_thread $round $min_delay $max_delay $num_rows > $log_file
+$HAMMER_ROOT/src/out/build/sync_delay $rowset_file $((num_agg - 1)) $addr_step $iterations $rowid $mem_size $time_file $num_warp $num_thread $round $min_delay $max_delay $num_rows > $log_file
 
 echo "Hammering done."

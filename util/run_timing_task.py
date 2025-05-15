@@ -1,6 +1,8 @@
 import argparse
 import subprocess
+import os
 
+HAMMER_ROOT = os.environ['HAMMER_ROOT']
 
 def get_parser_conf_set(parser):
     parser_conf_set = parser.add_parser(
@@ -198,25 +200,25 @@ if __name__ == "__main__":
     match args.task_name:
         case "conf_set":
             p = subprocess.Popen(
-                f"./out/build/rbce_conf_set {args.size} {args.range} {args.it} {args.step} {args.threshold} {args.trgtBankOfs} {args.file}",
+                f"{HAMMER_ROOT}/src/out/build/rbce_conf_set {args.size} {args.range} {args.it} {args.step} {args.threshold} {args.trgtBankOfs} {args.file}",
                 shell=True,
             )
             p.wait()
         case "row_set":
             p = subprocess.Popen(
-                f"./out/build/rbce_row_set {args.size} {args.it} {args.threshold} {args.trgtBankOfs} {args.max} {args.inputFile} {args.outputFile}",
+                f"{HAMMER_ROOT}/src/out/build/rbce_row_set {args.size} {args.it} {args.threshold} {args.trgtBankOfs} {args.max} {args.inputFile} {args.outputFile}",
                 shell=True,
             )
             p.wait()
         case "bank_set":
             p = subprocess.Popen(
-                f"./out/build/rbce_get_banks {args.size} {args.it} {args.step} {args.threshold} {args.max} {args.outputFile}",
+                f"{HAMMER_ROOT}/src/out/build/rbce_get_banks {args.size} {args.it} {args.step} {args.threshold} {args.max} {args.outputFile}",
                 shell=True,
             )
             p.wait()
         case "gt":
             p = subprocess.Popen(
-                f"./out/build/rbce_gen_time {args.size} {args.range} {args.it} {args.step} {args.file}",
+                f"{HAMMER_ROOT}/src/out/build/rbce_gen_time {args.size} {args.range} {args.it} {args.step} {args.file}",
                 shell=True,
             )
             p.wait()
