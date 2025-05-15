@@ -29,7 +29,7 @@ __global__ void normal_address_access(uint8_t *addr_arr, uint64_t step);
 __global__ void normal_address_access_timed(uint8_t *addr_arr);
 
 __global__ void n_address_conflict_kernel(uint8_t **addr_arr,
-                                          uint64_t *time_arr);
+                                          uint64_t *time_arr, int modifier = 5);
 
 __global__ void simple_hammer_kernel(uint8_t **addr_arr, uint64_t count, uint64_t* time);
 

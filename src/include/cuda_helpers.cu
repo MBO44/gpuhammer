@@ -56,24 +56,73 @@ std::tuple<int, int> get_dim_from_size(uint64_t size)
  * @param time_arr place to store timing valueW
  */
 __forceinline__ __device__ void
-uncached_access_timing_device(uint8_t *addr_access, uint64_t *time_arr)
+uncached_access_timing_device(uint8_t *addr_access, uint64_t *time_arr, int modifier)
 {
   uint64_t temp __attribute__((unused)), clock_start, clock_end;
-
   asm volatile("{\n\t"
                "discard.global.L2 [%0], 128;\n\t"
                "}" ::"l"(addr_access));
-  clock_start = clock64();
-
-  asm volatile("{\n\t"
-               "ld.u8.global.volatile %0, [%1];\n\t"
-               "}"
-               : "=l"(temp)
-               : "l"(addr_access));
-  clock_end = clock64();
+  switch (modifier)
+  {
+    case 0:
+      clock_start = clock64();
+      asm volatile("{\n\t"
+                  "ld.u8.global %0, [%1];\n\t"
+                  "}"
+                  : "=l"(temp)
+                  : "l"(addr_access));
+      clock_end = clock64();
+      break;
+    case 1:
+      clock_start = clock64();
+      asm volatile("{\n\t"
+                  "ld.u8.global.ca %0, [%1];\n\t"
+                  "}"
+                  : "=l"(temp)
+                  : "l"(addr_access));
+      clock_end = clock64();
+      break;
+    case 2:
+      clock_start = clock64();
+      asm volatile("{\n\t"
+                  "ld.u8.global.cg %0, [%1];\n\t"
+                  "}"
+                  : "=l"(temp)
+                  : "l"(addr_access));
+      clock_end = clock64();
+      break;
+    case 3:
+      clock_start = clock64();
+      asm volatile("{\n\t"
+                  "ld.u8.global.cs %0, [%1];\n\t"
+                  "}"
+                  : "=l"(temp)
+                  : "l"(addr_access));
+      clock_end = clock64();
+      break;
+    case 4:
+      clock_start = clock64();
+      asm volatile("{\n\t"
+                  "ld.u8.global.cv %0, [%1];\n\t"
+                  "}"
+                  : "=l"(temp)
+                  : "l"(addr_access));
+      clock_end = clock64();
+      break;
+    case 5:
+      clock_start = clock64();
+      asm volatile("{\n\t"
+                  "ld.u8.global.volatile %0, [%1];\n\t"
+                  "}"
+                  : "=l"(temp)
+                  : "l"(addr_access));
+      clock_end = clock64();
+      break;
+  }
+  
 
   *time_arr = clock_end - clock_start;
-  // printf("%ld, %lld, %ld\n", threadIdx.x, clock_end - clock_start, temp);
+  // printf("%lld\n", modifier);
 }
 
 /**
@@ -208,10 +257,12 @@ __global__ void normal_address_access_timed(uint8_t *addr_arr)
 }
 
 __global__ void n_address_conflict_kernel(uint8_t **addr_arr,
-                                          uint64_t *time_arr)
+                                          uint64_t *time_arr,
+                                          int modifier)
 {
   uncached_access_timing_device(*(addr_arr + threadIdx.x),
-                                time_arr + threadIdx.x);
+                                time_arr + threadIdx.x,
+                                modifier);
 }
 
 __global__ void simple_hammer_kernel(uint8_t **addr_arr, uint64_t count,

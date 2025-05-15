@@ -48,7 +48,7 @@ public:
    * @param file writes the time values to file.
    * @return uint64_t time value of the access.
    */
-  uint64_t repeat_n_addr_exp(std::ofstream *file = nullptr);
+  uint64_t repeat_n_addr_exp(std::ofstream *file = nullptr, int modifier=5);
 
   /**
    * @brief Runs f through the experiment range with a step size start from i.

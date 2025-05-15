@@ -46,7 +46,7 @@ void N_Conflict::set_addr_lst_host(uint64_t idx, uint64_t ofs)
   this->ADDR_LST_HOST[idx] = this->ADDR_LAYOUT + ofs;
 }
 
-uint64_t N_Conflict::repeat_n_addr_exp(std::ofstream *file)
+uint64_t N_Conflict::repeat_n_addr_exp(std::ofstream *file, int modifier)
 {
   /* Copy the addresses to GPU usable memory */
   cudaMemcpy(this->ADDR_LST_DEVICE, this->ADDR_LST_HOST,
@@ -56,7 +56,8 @@ uint64_t N_Conflict::repeat_n_addr_exp(std::ofstream *file)
   for (uint64_t i = 0; i < this->EXP_IT; i++)
   {
     n_address_conflict_kernel<<<1, this->N>>>(this->ADDR_LST_DEVICE,
-                                              this->TIME_ARR_DEVICE + i);
+                                              this->TIME_ARR_DEVICE + i,
+                                              modifier);
   }
   cudaDeviceSynchronize();
 
@@ -72,11 +73,7 @@ uint64_t N_Conflict::repeat_n_addr_exp(std::ofstream *file)
 
   if (file)
   {
-    *file << '(';
-    for (int i = 0; i < this->N; i++)
-      // For some reason uint8_t* not printable
-      *file << (void *)(*(this->ADDR_LST_HOST + i)) << ", ";
-    *file << ")\t" << min << '\n';
+    *file << min << '\n';
   }
 
   return min;

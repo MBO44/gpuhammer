@@ -4,6 +4,38 @@ import os
 
 HAMMER_ROOT = os.environ['HAMMER_ROOT']
 
+def get_parser_loads(parser):
+    parse_load = parser.add_parser(
+        "load",
+        help="Gets the load timing of different load modifiers",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parse_load.add_argument(
+        "--size",
+        type=int,
+        help="The size of the entire memory layout we will allocate in bytes",
+        default=15 * (1 << 30),
+    )
+    parse_load.add_argument(
+        "--it",
+        type=int,
+        help="Number of iterations when confirming conflict timing",
+        default=10,
+    )
+    parse_load.add_argument(
+        "--step",
+        type=int,
+        help="How many step bytes to step over for each iteration.",
+        default=32,
+    )
+    parse_load.add_argument(
+        "--file",
+        type=str,
+        help="File to store timing values",
+        default="LOAD_TIMING.txt",
+    )
+
+
 def get_parser_conf_set(parser):
     parser_conf_set = parser.add_parser(
         "conf_set",
@@ -196,6 +228,7 @@ if __name__ == "__main__":
     get_parser_gen_time(subparsers)
     get_parser_row_set(subparsers)
     get_parser_bank_set(subparsers)
+    get_parser_loads(subparsers)
     args = parser.parse_args()
     match args.task_name:
         case "conf_set":
@@ -219,6 +252,12 @@ if __name__ == "__main__":
         case "gt":
             p = subprocess.Popen(
                 f"{HAMMER_ROOT}/src/out/build/rbce_gen_time {args.size} {args.range} {args.it} {args.step} {args.file}",
+                shell=True,
+            )
+            p.wait()
+        case "load":
+            p = subprocess.Popen(
+                f"{HAMMER_ROOT}/src/out/build/rbce_load {args.size} {args.it} {args.step} {args.file}",
                 shell=True,
             )
             p.wait()

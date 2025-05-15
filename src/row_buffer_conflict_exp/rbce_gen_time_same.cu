@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-  /* Argument EXP_RANGE, SIZE, EXP_IT, STEP */
+  /* Argument LAYOUT_SIZE, EXP_RANGE, EXP_IT, STEP */
   rbce::N_Conflict nc_test(2, std::stoull(argv[1]), std::stoull(argv[2]),
                            std::stoull(argv[3]), std::stoull(argv[4]));
 

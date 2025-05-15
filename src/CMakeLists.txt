@@ -46,6 +46,9 @@ target_link_libraries(rbce_gen_time PUBLIC rbce_lib)
 add_executable(rbce_gen_time_same ./row_buffer_conflict_exp/rbce_gen_time_same.cu)
 target_link_libraries(rbce_gen_time_same PUBLIC rbce_lib)
 
+add_executable(rbce_load ./row_buffer_conflict_exp/rbce_load_main.cu)
+target_link_libraries(rbce_load PUBLIC rbce_lib)
+
 # Hammer
 add_library(hammer_lib ./include/cuda_helpers.cu ./include/hammer_util.cu ./include/hammer_kernels.cu)
 target_link_libraries(hammer_lib PUBLIC Threads::Threads)

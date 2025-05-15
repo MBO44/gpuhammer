@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-  /* Argument EXP_RANGE, EXP_IT, STEP */
+  /* Argument LAYOUT_SIZE, EXP_RANGE, EXP_IT, STEP */
   rbce::N_Conflict nc_test(2, std::stoull(argv[1]), std::stoull(argv[2]),
                            std::stoull(argv[3]), std::stoull(argv[4]));
 
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
       [&nc_test, time_file](uint64_t step)
       {
         nc_test.set_addr_lst_host(1, step);
-        nc_test.repeat_n_addr_exp(time_file);
+        nc_test.repeat_n_addr_exp(time_file, 0);
       });
 
   time_file->close();
