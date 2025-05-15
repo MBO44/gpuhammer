@@ -1,3 +1,4 @@
+cd src
 if [ ! -d "rmm" ]; then
   echo "rmm does exist."
   git clone -b branch-25.04 https://github.com/rapidsai/rmm.git
