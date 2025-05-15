@@ -51,7 +51,7 @@ for i in {0..7}; do
         fi
 
         # File paths
-        rowset_file="$HAMMER_ROOT/src/row_sets/ROW_SET_${bank_offset}.txt"
+        rowset_file="$HAMMER_ROOT/results/row_sets/ROW_SET_${bank_offset}.txt"
         log_file="$HAMMER_ROOT/src/log/bitflip/${num_agg}agg_b${bank_offset}_flip${flip_row}_${pats[$j]}${pats[$k]}.log"
         bitflip_file="$HAMMER_ROOT/src/log/bitflip/${num_agg}agg_b${bank_offset}_count_flip${flip_row}_${pats[$j]}${pats[$k]}.txt"
 

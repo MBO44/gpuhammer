@@ -26,7 +26,7 @@ mem_size=50465865728    # Bytes of memory allocated for hammering (recommend: si
 
 # File paths
 mkdir -p $HAMMER_ROOT/src/log/delay
-rowset_file="$HAMMER_ROOT/src/row_sets/ROW_SET_${bank_id}.txt"
+rowset_file="$HAMMER_ROOT/results/row_sets/ROW_SET_${bank_id}.txt"
 time_file="$HAMMER_ROOT/src/log/delay/${num_agg}agg_b${bank_id}_timing_delay.txt"
 log_file="$HAMMER_ROOT/src/log/delay/${num_agg}agg_b${bank_id}_delay.log"
 

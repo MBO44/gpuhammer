@@ -33,7 +33,7 @@ mem_size=50465865728    # Bytes of memory allocated for hammering (recommend: si
 
 # File paths
 mkdir -p $HAMMER_ROOT/src/log/sweep
-rowset_file="$HAMMER_ROOT/src/row_sets/ROW_SET_${bank_id}.txt"
+rowset_file="$HAMMER_ROOT/results/row_sets/ROW_SET_${bank_id}.txt"
 log_file="$HAMMER_ROOT/src/log/sweep/${num_agg}agg_b${bank_id}_${vic_pat}${agg_pat}.log"
 bitflip_file="$HAMMER_ROOT/src/log/sweep/${num_agg}agg_b${bank_id}_${vic_pat}${agg_pat}_bitflip_count.txt"
 
