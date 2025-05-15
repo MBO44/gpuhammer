@@ -16,7 +16,7 @@
 1. Clone the repository: `git clone https://github.com/sith-lab/gpuhammer.git`
 2. Change to repository directory: `cd gpuhammer`
 3. Set environment variable: `export HAMMER_ROOT=</path/to/gpuhammer>`
-4. Setup conda and RAPIDS RMM development environment and libraries with `bash env_setup.sh`
+4. Setup conda and RAPIDS RMM development environment and libraries with `bash run_setup.sh`
 5. Enable conda virtual environment with `conda activate rmm_dev`
 6. Run `cmake -S ./src -B ./src/out/build`
 7. Change to build directory `cd ./src/out/build`, and run `make`
