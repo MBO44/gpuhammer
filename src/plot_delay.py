@@ -15,7 +15,7 @@ def read_file(filename):
     return x_values, z_values
 
 def generate_filename_str(num_agg, bank):
-    return f"log/{num_agg}agg_b{bank}_timing_delay.txt"
+    return f"log/delay/{num_agg}agg_b{bank}_timing_delay.txt"
 
 # Read the data from the files
 for num_agg in [int(x) for x in sys.argv[4:]]:

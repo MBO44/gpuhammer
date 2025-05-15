@@ -43,6 +43,11 @@ int main(int argc, char *argv[])
   nc_test.set_addr_lst_host(0, offset_to_bank);
   nc_test.set_addr_lst_host(1, offset_to_bank);
   uint64_t conf_delay = nc_test.repeat_n_addr_exp() + threshold;
+  for (int i = 0; i < 100000; i++)
+  {
+          conf_delay = nc_test.repeat_n_addr_exp() + threshold;
+  }
+  cudaDeviceSynchronize();
 
   std::string buf;
   std::ifstream conf_set_file(argv[6]);

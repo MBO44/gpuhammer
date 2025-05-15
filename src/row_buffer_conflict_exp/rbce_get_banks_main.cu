@@ -47,6 +47,11 @@ int main(int argc, char *argv[])
   nc_test.set_addr_lst_host(0, 0);
   nc_test.set_addr_lst_host(1, 0);
   uint64_t temp_base = nc_test.repeat_n_addr_exp();
+  for (int i = 0; i < 100000; i++)
+  {
+          temp_base = nc_test.repeat_n_addr_exp();
+  }
+  cudaDeviceSynchronize();
   bank_map[0] = {temp_base, next_conf_step(nc_test, 0, temp_base, threshold)};
 
   nc_test.loop_range(

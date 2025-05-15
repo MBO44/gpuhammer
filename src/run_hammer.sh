@@ -4,10 +4,10 @@ bash ./init_cuda.sh 1800 7600
 
 # Variables
 bank_id=1
-delay=55            # Delay, set to an optimal delay found by run_delay.sh
+delay=56            # Delay, set to an optimal delay found by run_delay.sh
 
 num_rows=64169      # Number of rows in the row_set (line number - 1)
-min_rowid=30250         # Minimum row id to hammer (set to >=6 to avoid list overflow in the code)
+min_rowid=6         # Minimum row id to hammer (set to >=6 to avoid list overflow in the code)
 max_rowid=64000     # Maximum row id to hammer (set to <= num_rows - 100 to avoid overflow)
 
 vic_pat=55          # Victim row data pattern in hex
@@ -32,9 +32,10 @@ addr_step=256           # Set to be the <step> parameter used in finding conf_se
 mem_size=50465865728    # Bytes of memory allocated for hammering (recommend: size of memory - 1GB)
 
 # File paths
+mkdir -p ./log/sweep
 rowset_file="./row_sets/ROW_SET_${bank_id}.txt"
-log_file="./log/${num_agg}agg_b${bank_id}_${vic_pat}${agg_pat}.log"
-bitflip_file="./log/${num_agg}agg_b${bank_id}_${vic_pat}${agg_pat}_bitflip_count.txt"
+log_file="./log/sweep/${num_agg}agg_b${bank_id}_${vic_pat}${agg_pat}.log"
+bitflip_file="./log/sweep/${num_agg}agg_b${bank_id}_${vic_pat}${agg_pat}_bitflip_count.txt"
 
 
 # Running the test

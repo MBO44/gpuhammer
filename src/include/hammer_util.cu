@@ -241,29 +241,62 @@ bool verify_content(RowList &rows, std::vector<uint64_t> &victims,
   return has_diff;
 }
 
+// bool verify_all_content(RowList &rows, std::vector<uint64_t> &victims,
+//                         std::vector<uint64_t> &aggressors, 
+//                         const uint64_t b_count, const uint8_t pat)
+// {
+//   bool *diff_device;
+//   bool diff;
+//   cudaMalloc(&diff_device, sizeof(bool *));
+//   cudaMemset(diff_device, 0, sizeof(bool *));
+
+//   for (const auto v : victims)
+//   {
+//     if (std::count(aggressors.begin(), aggressors.end(), v) != 0) continue;
+//     for (const auto addr : rows[v])
+//     {
+//       static int numBlock = std::get<0>(get_dim_from_size(b_count));
+//       static int numThreads = std::get<1>(get_dim_from_size(b_count));
+//       verify_result_kernel<<<numBlock, numThreads>>>(addr, pat, b_count, diff_device);
+//     }
+//   }
+//   cudaDeviceSynchronize();
+//   cudaMemcpy(&diff, diff_device, sizeof(bool *), cudaMemcpyDeviceToHost);
+//   cudaFree(diff_device);
+  
+//   return diff;
+// }
+
 bool verify_all_content(RowList &rows, std::vector<uint64_t> &victims,
                         std::vector<uint64_t> &aggressors, 
                         const uint64_t b_count, const uint8_t pat)
 {
   bool *diff_device;
   bool diff;
+  uint8_t **addrs_device;
+  int batchSize = 64;
   cudaMalloc(&diff_device, sizeof(bool *));
   cudaMemset(diff_device, 0, sizeof(bool *));
+  cudaMalloc(&addrs_device, sizeof(uint8_t *) * 8 * batchSize);
 
-  for (const auto v : victims)
+  for (int i = 0; i < victims.size(); i += batchSize)
   {
-    if (std::count(aggressors.begin(), aggressors.end(), v) != 0) continue;
-    for (const auto addr : rows[v])
+    int amount = 0;
+    for (int j = i; j < i + batchSize && j < victims.size(); j++)
     {
-      static int numBlock = std::get<0>(get_dim_from_size(b_count));
-      static int numThreads = std::get<1>(get_dim_from_size(b_count));
-      verify_result_kernel<<<numBlock, numThreads>>>(addr, pat, b_count, diff_device);
+      auto& v = victims[j];
+      if (std::count(aggressors.begin(), aggressors.end(), v) != 0) continue;
+
+      int size = rows[v].size() <= 8 ? rows[v].size() : 8;
+      cudaMemcpy(addrs_device + amount, rows[v].data(), size * sizeof(uint8_t *), cudaMemcpyHostToDevice);
+      amount += size;
     }
+    if (amount != 0)
+      better_verify_result_kernel<<<amount, 256>>>(addrs_device, pat, b_count, diff_device);
   }
   cudaDeviceSynchronize();
   cudaMemcpy(&diff, diff_device, sizeof(bool *), cudaMemcpyDeviceToHost);
   cudaFree(diff_device);
-  
   return diff;
 }
 

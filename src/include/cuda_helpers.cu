@@ -129,12 +129,37 @@ __global__ void verify_result_kernel(uint8_t *addr_arr, uint64_t target,
 
   if (diff_count)
   {
-    *has_diff = true;
+    if (has_diff) *has_diff = true;
     printf("Bit-Flip Location: %d bit at %p\n", diff_count, addr_arr + offset);
     printf("Expected Pattern: %02lx, Observed Pattern: %02lx\n", target, value);
   }
 }
 
+__global__ void better_verify_result_kernel(uint8_t **addr_arr, uint64_t target,
+  uint64_t b_len, bool *has_diff)
+{
+  uint64_t value;
+
+  int addr_id = (threadIdx.x + blockIdx.x * blockDim.x) / b_len;
+  int byte_id = (threadIdx.x + blockIdx.x * blockDim.x) % b_len;
+  asm volatile("{\n\t"
+                "ld.u8.global.volatile %0, [%1];\n\t"
+                "}"
+                : "=l"(value)
+                : "l"(*(addr_arr + addr_id) + byte_id));
+
+  int diff_count = 0;
+  int diff = target ^ value; // XOR
+  for (int i = 0; i < 8; i++)
+    diff_count += (diff >> i) & 1;
+
+  if (diff_count)
+  {
+    if (has_diff) *has_diff = true;
+    printf("Bit-Flip Location: %d bit at %p\n", diff_count, *(addr_arr + addr_id) + byte_id);
+    printf("Expected Pattern: %02lx, Observed Pattern: %02lx\n", target, value);
+  }
+}
 
 __global__ void evict_kernel(uint8_t *addr, uint64_t size)
 { 

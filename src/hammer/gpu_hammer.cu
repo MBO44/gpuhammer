@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
       auto end_hammer = std::chrono::high_resolution_clock::now();
 
       /* Verify result */
-      clear_L2cache_rows(rows, pat_vics, step);
+      evict_L2cache(layout);
 
       // Comment out the first line and uncomment the following line to check 
       // for bit-flips in the nearby neighborhood to reduce hammering time.
@@ -116,7 +116,6 @@ int main(int argc, char *argv[])
 
       /* Clean up and prepare for next launch*/
       cudaDeviceSynchronize();
-      clear_L2cache_rows(rows, pat_vics, step);
       auto end_loop = std::chrono::high_resolution_clock::now();
 
       std::chrono::duration<double, std::milli> duration_evict = start_hammer - start_loop;

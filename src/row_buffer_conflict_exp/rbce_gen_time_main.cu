@@ -14,6 +14,11 @@ int main(int argc, char *argv[])
   nc_test.set_addr_lst_host(0, 0);
   nc_test.set_addr_lst_host(1, 0);
   nc_test.repeat_n_addr_exp(); /* First kernel is slower */
+  for (int i = 0; i < 100000; i++)
+  {
+          nc_test.repeat_n_addr_exp();
+  }
+  cudaDeviceSynchronize();
 
   nc_test.loop_range(
       [&nc_test, time_file](uint64_t step)

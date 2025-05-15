@@ -21,6 +21,9 @@ __global__ void evict_kernel(uint8_t *addr, uint64_t size);
 __global__ void verify_result_kernel(uint8_t *addr_arr, uint64_t target,
                                     uint64_t b_len, bool *has_diff);
 
+__global__ void better_verify_result_kernel(uint8_t **addr_arr, uint64_t target,
+  uint64_t b_len, bool *has_diff);
+
 __global__ void normal_address_access(uint8_t *addr_arr, uint64_t step);
 
 __global__ void normal_address_access_timed(uint8_t *addr_arr);

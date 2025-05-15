@@ -14,7 +14,7 @@ num_thread=3        # Number of threads per warp
 round=1             # No. of round per tREFI, each round hammers <num_agg> rows
 
 min_delay=0         # Minimum delay to test
-max_delay=150       # Maximum delay to test
+max_delay=200       # Maximum delay to test
 
 num_rows=64169      # Number of rows in the row_set (line number - 1)
 rowid=100           # Id of a row to test the delays, can be arbitrary
@@ -25,9 +25,10 @@ addr_step=256           # Set to be the <step> parameter used in finding conf_se
 mem_size=50465865728    # Bytes of memory allocated for hammering (recommend: size of memory - 1GB)
 
 # File paths
+mkdir -p ./log/delay
 rowset_file="./row_sets/ROW_SET_${bank_id}.txt"
-time_file="./log/${num_agg}agg_b${bank_id}_timing_delay.txt"
-log_file="./log/${num_agg}agg_b${bank_id}_delay.log"
+time_file="./log/delay/${num_agg}agg_b${bank_id}_timing_delay.txt"
+log_file="./log/delay/${num_agg}agg_b${bank_id}_delay.log"
 
 
 # Running the test

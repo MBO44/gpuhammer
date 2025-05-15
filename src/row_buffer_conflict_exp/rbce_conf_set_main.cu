@@ -20,6 +20,11 @@ int main(int argc, char *argv[])
   nc_test.set_addr_lst_host(0, offset_to_bank);
   nc_test.set_addr_lst_host(1, offset_to_bank);
   uint64_t base_delay = nc_test.repeat_n_addr_exp();
+  for (int i = 0; i < 100000; i++)
+  {
+	  base_delay = nc_test.repeat_n_addr_exp();
+  }
+  cudaDeviceSynchronize();
   uint64_t conflict_delay = base_delay + threshold;
 
   nc_test.loop_range(
