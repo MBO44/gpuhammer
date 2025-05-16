@@ -214,6 +214,12 @@ def get_parser_gen_time(parser):
         help="File to store timing values",
         default="TIMING_VALUE.txt",
     )
+    parser_gt.add_argument(
+        "--same",
+        action='store_true',
+        help="Get normal access time instead, not conflict.",
+        default=False,
+    )
 
 
 if __name__ == "__main__":
@@ -250,11 +256,18 @@ if __name__ == "__main__":
             )
             p.wait()
         case "gt":
-            p = subprocess.Popen(
-                f"{HAMMER_ROOT}/src/out/build/rbce_gen_time {args.size} {args.range} {args.it} {args.step} {args.file}",
-                shell=True,
-            )
-            p.wait()
+            if (args.same):
+                p = subprocess.Popen(
+                    f"{HAMMER_ROOT}/src/out/build/rbce_gen_time_same {args.size} {args.range} {args.it} {args.step} {args.file}",
+                    shell=True,
+                )
+                p.wait()
+            else:
+                p = subprocess.Popen(
+                    f"{HAMMER_ROOT}/src/out/build/rbce_gen_time {args.size} {args.range} {args.it} {args.step} {args.file}",
+                    shell=True,
+                )
+                p.wait()
         case "load":
             p = subprocess.Popen(
                 f"{HAMMER_ROOT}/src/out/build/rbce_load {args.size} {args.it} {args.step} {args.file}",
