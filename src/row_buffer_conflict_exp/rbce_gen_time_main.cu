@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
       [&nc_test, time_file](uint64_t step)
       {
         nc_test.set_addr_lst_host(1, step);
-        nc_test.repeat_n_addr_exp(time_file, 0);
+        nc_test.repeat_n_addr_exp(time_file);
       });
 
   time_file->close();
