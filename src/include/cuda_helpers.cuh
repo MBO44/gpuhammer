@@ -33,6 +33,12 @@ __global__ void n_address_conflict_kernel(uint8_t **addr_arr,
 
 __global__ void simple_hammer_kernel(uint8_t **addr_arr, uint64_t count, uint64_t* time);
 
+__global__ void single_thread_hammer(uint8_t **addr_arr, uint64_t count, uint64_t n, uint64_t *time);
+
+__global__ void sync_hammer_kernel(uint8_t **addr_arr, uint64_t count,
+                                   uint64_t delay, uint64_t period,
+                                   uint64_t *time);
+
 __global__ void warp_simple_hammer_kernel(uint8_t **addr_arr, uint64_t count, uint64_t n, uint64_t k, uint64_t len, uint64_t delay, uint64_t period, uint64_t* time);
 
 #endif /* GPU_ROWHAMMER_CUDA_HELPERS_CUH */

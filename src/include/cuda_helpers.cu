@@ -293,6 +293,62 @@ __global__ void simple_hammer_kernel(uint8_t **addr_arr, uint64_t count,
   *time = ce - cs;
 }
 
+__global__ void single_thread_hammer(uint8_t **addr_arr, uint64_t count, uint64_t n, uint64_t *time)
+{
+  uint64_t temp __attribute__((unused));
+  uint64_t ce, cs;
+  cs = clock64();
+  for (; count--;)
+  {
+    for (uint64_t i = 0; i < n; i++)
+    {
+      asm volatile("{\n\t"
+                  "discard.global.L2 [%0], 128;\n\t"
+                  "}" ::"l"(addr_arr[i]));
+      asm volatile("{\n\t"
+                  "ld.u8.global.volatile %0, [%1];\n\t"
+                  "}"
+                  : "=l"(temp)
+                  : "l"(addr_arr[i]));
+    }
+  }
+  ce = clock64();
+  *time = ce - cs;
+}
+
+__global__ void sync_hammer_kernel(uint8_t **addr_arr, uint64_t count,
+                                   uint64_t delay, uint64_t period,
+                                   uint64_t *time)
+{
+  uint64_t temp, ret = 0, ce, cs, i;
+  uint8_t *addr = *(addr_arr + threadIdx.x);
+  cs = clock64();
+
+  for (; count--;)
+  {
+    for (i = delay; i--;)
+    {
+      asm volatile("{\n\t"
+                   "add.u64 %0, %1, %2;\n\t"
+                   "}"
+                   : "=l"(ret)
+                   : "l"(ret), "l"(temp));
+    }
+    for (i = period; i--;)
+    {
+      asm volatile("{\n\t"
+                   "discard.global.L2 [%0], 128;\n\t"
+                   "}" ::"l"(addr));
+      asm volatile("{\n\t"
+                   "ld.u8.global.volatile %0, [%1];\n\t"
+                   "}"
+                   : "=l"(temp)
+                   : "l"(addr));
+    }
+  }
+  ce = clock64();
+  *time = ce - cs;
+}
 
 __global__ void warp_simple_hammer_kernel(uint8_t **addr_arr, uint64_t count, uint64_t n, uint64_t k, uint64_t len, uint64_t delay, uint64_t period, uint64_t* time)
 {

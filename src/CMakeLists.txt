@@ -62,6 +62,14 @@ add_executable(sync_delay ./hammer/synchronization.cu)
 target_link_libraries(sync_delay PUBLIC rbce_lib hammer_lib)
 target_link_libraries(sync_delay PRIVATE Threads::Threads)
 
+add_executable(mt_sync_delay ./hammer/synchronization_multi_thread.cu)
+target_link_libraries(mt_sync_delay PUBLIC rbce_lib hammer_lib)
+target_link_libraries(mt_sync_delay PRIVATE Threads::Threads)
+
+add_executable(st_sync_delay ./hammer/synchronization_single_thread.cu)
+target_link_libraries(st_sync_delay PUBLIC rbce_lib hammer_lib)
+target_link_libraries(st_sync_delay PRIVATE Threads::Threads)
+
 add_executable(gpu_hammer ./hammer/gpu_hammer.cu)
 target_link_libraries(gpu_hammer PUBLIC rbce_lib hammer_lib)
 target_link_libraries(gpu_hammer PRIVATE Threads::Threads)

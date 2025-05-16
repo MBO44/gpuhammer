@@ -7,6 +7,12 @@
 uint64_t start_simple_hammer(RowList &rows, std::vector<uint64_t> &agg_vec,
                              uint64_t it);
 
+uint64_t start_single_thread_hammer(RowList &rows, std::vector<uint64_t> &agg_vec,
+                                  uint64_t it, uint64_t n, uint64_t k, uint64_t len, uint64_t delay, uint64_t period);
+
+uint64_t start_multi_thread_hammer(RowList &rows, std::vector<uint64_t> &agg_vec,
+                                  uint64_t it, uint64_t n, uint64_t k, uint64_t len, uint64_t delay, uint64_t period);
+
 uint64_t start_warp_simple_hammer(RowList &rows, std::vector<uint64_t> &agg_vec,
                              uint64_t it, uint64_t n, uint64_t k, uint64_t len, uint64_t delay, uint64_t period);
 
