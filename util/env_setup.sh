@@ -12,6 +12,7 @@ fi
 conda init
 source activate base
 conda activate rmm_dev
+yes | conda remove gcc
 
 if [ ! -d "rmm_lib" ]; then
     rm -rf build
