@@ -6,7 +6,7 @@ bash $HAMMER_ROOT/util/init_cuda.sh 1800 7600
 
 
 # Variables
-bank_id=1
+bank_id=256
 
 num_agg=24          # Number of aggressors
 num_warp=8          # Number of warps

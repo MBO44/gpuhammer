@@ -3,7 +3,7 @@
 bash $HAMMER_ROOT/util/init_cuda.sh 1800 7600
 
 # Variables
-bank_id=1
+bank_id=256
 delay=56            # Delay, set to an optimal delay found by run_delay.sh
 
 num_rows=64169      # Number of rows in the row_set (line number - 1)
