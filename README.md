@@ -1,42 +1,78 @@
-# GPU-RowHammer
+# GPU-RowHammer (34th USENIX Security Symposium)
+
+## Introduction
+
+This is the code artifact for the paper 
+**"CGPUHammer: Rowhammer Attacks on GPU Memories are Practical"**, presented at [USENIX Security 2025](https://www.usenix.org/conference/usenixsecurity25)
+
+Authors: Chris S. Lin (University of Toronto), Joyce Qu (University of Toront), Gururaj Saileshwar (University of Toronto).
+
+You can reproduce our security and performance evaluations as follows.
+
 ## Required Environment
-- Anaconda 24.9.2 (Note: most software requirements are resolved by the RAPIDS RMM conda environment)
-- CMake 3.26.4+
-- C++17+
-- NVIDIA GPU sm_80+
-- Python 3.10+
-- NVIDIA CUDA Driver (Tested with Driver Version: 545.23.08)
-- NVIDIA CUDA Toolkit (Tested with CUDA Version: 12.3)
+**Run-time Environment:**  We suggest using a Linux distribution compatible with g++-11 or newer. We tested our artifacts on Ubuntu 20.04.
+
+- Software Dependencies:
+   - Anaconda 24.9.2
+   - CMake 3.26.4+
+   - g++ with C++17 Support (tested with 11.4.90)
+   - Python 3.10+
+   - NVIDIA CUDA Driver (Tested with Driver Version: 545.23.08)
+   - NVIDIA CUDA Toolkit (Tested with CUDA Version: 12.3)
+
+- Hardware Dependencies:
+   - NVIDIA GPU sm_80+
+   - GDDR6 SDRAM
 
 ## Affected GPUs
 - NVIDIA A6000 GPU with 48GB GDDR6
 
-## Build
+## Steps for Artifact Generation
 
-1. Clone the repository: `git clone https://github.com/sith-lab/gpuhammer.git`
-2. Change to repository directory: `cd gpuhammer`
-3. Set environment variable: `export HAMMER_ROOT=</path/to/gpuhammer>`
-4. Setup conda and RAPIDS RMM development environment and libraries with `bash run_setup.sh`
-5. Enable conda virtual environment with `conda activate rmm_dev`
-6. Run `cmake -S ./src -B ./src/out/build`
-7. Change to build directory `cd ./src/out/build`, and run `make`
+### 1. Clone the Repository
+Ensure you have already cloned the repository during the security analysis:
+```bash
+git clone https://github.com/sith-lab/gpuhammer.git
+```
 
-Feel free to edit the CMakeLists.txt to change build configurations. Simply do step 4 when you make any changes to apply them.
+## 2. GPU Setup
+For the Rowhammer attack, a prerequiste is **disabling ECC**, if that is not already done by default on the GPU. If it is enabled, use the following commands to disable:
+```bash
+sudo nvidia-smi -e 0
+sudo reboot
+```
 
-## GPU Setup
-For the Rowhammer attack, a prerequiste is disabling ECC, if that is not already done by default on the GPU. Additionally, our profiling is easier with the persistence mode enabled, and with fixed GPU and memory clock rates, although these are not pre-requisites. The following script performs the above actions:
+ Additionally, our profiling is easier with the persistence mode enabled, and with fixed GPU and memory clock rates, although these are not pre-requisites. The following script performs the above actions:
 ```bash
 # Example usage: 
-#   bash init_cuda.sh 1800 7600
-bash init_cuda.sh <MAX_GPU_CLOCK> <MAX_MEMORY_CLOCK>
+#   bash ./util/init_cuda.sh 1800 7600
+cd gpuhammer
+bash ./util/init_cuda.sh <MAX_GPU_CLOCK> <MAX_MEMORY_CLOCK>
 ```
 
 **MAX_GPU_CLOCK** and **MAX_MEMORY_CLOCK** are found with `deviceQuery` from CUDA samples, which we provide a sample for A6000 in 'deviceQuery.txt'. 
 
 To undo the changes, run:
 ```bash
-# Note this script don't reset ECC state.
-bash reset_cuda.sh
+cd gpuhammer
+bash ./util/reset_cuda.sh
+```
+
+### 3. Run the Artifact
+Run the following commands to install dependencies, build GPUHammer, and execute experiments.
+
+```bash
+  cd gpuhammer
+  export HAMMER_ROOT=`pwd`
+  bash ./run_artifact.sh
+```
+
+### 4. Generate Figures
+After completing the experiments, use the command below to generate plots.
+
+```bash
+cd gpuhammer
+bash ./plot_all_figures.sh
 ```
 
 ## General Steps of usage
