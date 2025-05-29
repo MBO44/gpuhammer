@@ -23,5 +23,3 @@ else
   fi
   done
 fi
-
-python3 $HAMMER_ROOT/plot_scripts/plot_fig2.py

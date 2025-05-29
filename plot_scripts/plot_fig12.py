@@ -58,11 +58,6 @@ for i in range(len(lists)):
     lists[i] = running_max(lists[i])
 average = compute_elementwise_average(lists)
 
-print("Element-wise average:", average)
-# # # Sample data
-# categories = list(["None", ".ca", ".cg", ".cs", ".cv", ".volatile"])
-# cmap = plt.get_cmap("tab10")
-
 fig,ax = plt.subplots()
 fig.set_size_inches(7, 2)
 ax.tick_params(axis='both', which='major', labelsize=16, left=False)

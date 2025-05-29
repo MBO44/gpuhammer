@@ -37,6 +37,3 @@ else
   fi
   done
 fi
-
-python3 ~/gpuhammer/plot_scripts/plot_fig10a.py $HAMMER_ROOT/results/fig10/delay_8w.txt $HAMMER_ROOT/results/fig10/delay_12w.txt $HAMMER_ROOT/results/fig10/delay_16w.txt $HAMMER_ROOT/results/fig10/delay_24w.txt 10000
-python3 ~/gpuhammer/plot_scripts/plot_fig10b.py $HAMMER_ROOT/results/fig10/delay_8w.txt $HAMMER_ROOT/results/fig10/delay_6w_2t.txt $HAMMER_ROOT/results/fig10/delay_8w_2t.txt $HAMMER_ROOT/results/fig10/delay_8w_3t.txt 10000

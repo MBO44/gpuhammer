@@ -23,7 +23,3 @@ else
   fi
   done
 fi
-
-python3 $HAMMER_ROOT/plot_scripts/plot_fig5a.py $HAMMER_ROOT/results/fig5_6/CONFLICT_TIMING.txt $HAMMER_ROOT/results/row_sets/CONF_SET_0.txt
-python3 $HAMMER_ROOT/plot_scripts/plot_fig5b.py $HAMMER_ROOT/results/fig5_6/CONFLICT_TIMING.txt $HAMMER_ROOT/results/fig5_6/BASE_TIMING.txt $HAMMER_ROOT/results/row_sets/CONF_SET_0.txt
-python3 $HAMMER_ROOT/plot_scripts/plot_fig6.py $HAMMER_ROOT/results/fig5_6/BASE_TIMING.txt

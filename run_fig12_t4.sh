@@ -37,6 +37,3 @@ else
     fi
   done
 fi
-
-bash $HAMMER_ROOT/plot_scripts/plot_t4.sh
-python3 $HAMMER_ROOT/plot_scripts/plot_fig12.py

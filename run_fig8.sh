@@ -25,5 +25,3 @@ else
   fi
   done
 fi
-
-python3 $HAMMER_ROOT/plot_scripts/plot_fig8.py $HAMMER_ROOT/results/fig8/st_delays.txt $HAMMER_ROOT/results/fig8/mt_delays.txt $HAMMER_ROOT/results/fig8/mw_delays.txt 10000

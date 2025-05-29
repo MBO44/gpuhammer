@@ -14,10 +14,7 @@ for i in range(fileCount):
         timeList[i] = np.divide(it, timeList[i])
         for j in range(2, 33):
             timeList[i][j - 2] = j * timeList[i][j - 2]
-print(timeList)
-# print(timeList[0][6])
-# print(timeList[2][6])    
-# print(timeList[1][6])
+
 fig, ax = plt.subplots()
 fig.set_size_inches(10, 3)
 x = np.arange(2, len(timeList[0]) + 2, 1, dtype=int)

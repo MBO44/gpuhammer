@@ -42,12 +42,8 @@ all_file = sys.argv[1]
 access_time_file = sys.argv[2]
 conf_set_file = sys.argv[3]
 initialize_data(all_file, access_time_file, conf_set_file)
-print(range(min_delay, max_delay, 10))
 counts_all, bins = np.histogram(all_addresses, bins=range(min_delay, max_delay, 10))
-print(counts_all, bins)
 counts_actual, _ = np.histogram(actual_conflicts, bins=range(min_delay, max_delay, 10))
-print(counts_actual, bins)
-
 
 # # Sample data
 categories = list(range(min_delay, max_delay, 10))

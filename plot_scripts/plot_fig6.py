@@ -29,10 +29,7 @@ def initialize_data(all_file):
 
 all_file = sys.argv[1]
 initialize_data(all_file)
-print(range(min_delay, max_delay, 10))
 counts_all, bins = np.histogram(all_addresses, bins=range(min_delay, max_delay, 10))
-print(counts_all, bins)
-
 
 # # Sample data
 categories = list(range(min_delay, max_delay, 10))
