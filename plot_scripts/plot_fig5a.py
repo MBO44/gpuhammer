@@ -35,8 +35,8 @@ def initialize_data(all_file, conf_set_file):
     min_delay = round(min_delay, -1)
     max_delay = roundup_m10(max_delay) + 1
 
-all_file = sys.argv[1]
-conf_set_file = sys.argv[2]
+all_file = f"{HAMMER_ROOT}/results/fig5_6/CONFLICT_TIMING.txt"
+conf_set_file = f"{HAMMER_ROOT}/results/row_sets/CONF_SET_0.txt"
 initialize_data(all_file, conf_set_file)
 counts_all, bins = np.histogram(all_addresses, bins=range(min_delay, max_delay, 10))
 counts_actual, _ = np.histogram(actual_conflicts, bins=range(min_delay, max_delay, 10))

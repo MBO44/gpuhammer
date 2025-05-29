@@ -3,12 +3,16 @@ import numpy as np
 import sys, os
 
 HAMMER_ROOT = os.environ['HAMMER_ROOT']
-fileCount = len(sys.argv) - 2 # Minus the first and last
+delay_files = [f"{HAMMER_ROOT}/results/fig8/st_delays.txt",
+               f"{HAMMER_ROOT}/results/fig8/mt_delays.txt",
+               f"{HAMMER_ROOT}/results/fig8/mw_delays.txt"
+]
+
 # it = float(sys.argv[fileCount+1]) * 23052288
-it = float(sys.argv[fileCount+1]) * 32000000
-timeList = [[] for i in range(fileCount)]
-for i in range(fileCount):
-    with open(sys.argv[i + 1]) as f:
+it = 10000 * 32000000
+timeList = [[] for i in range(len(delay_files))]
+for i in range(len(delay_files)):
+    with open(delay_files[i]) as f:
         for line in f:
             timeList[i].append(int(line.strip()))
         timeList[i] = np.divide(it, timeList[i])
@@ -33,7 +37,7 @@ for ytick in yticks:
     for xtick in xticks:
          ax.vlines(xtick, ytick+800000, ytick, linewidth=0.5,  color='grey', linestyle='-', alpha=0.5)
 # marker=['o', 's', '^'][i]
-for i in range(fileCount):
+for i in range(len(delay_files)):
     plt.plot(x, timeList[i], marker=['^', 'o', 's'][i], linewidth=3, markersize=8, color=[cmap(2), cmap(0), cmap(1)][i], markevery=[x-2 for x in ax.get_xticks()])
 plt.axhline(y=32000000/45, c="red", linewidth=1)
 plt.text(len(x) / 2 + 2, 32000000/45 + 50000, 'Theoretical Maximum', fontsize=16, va='center', ha='center', weight='bold', c="black")

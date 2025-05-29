@@ -73,7 +73,7 @@ After completing the experiments, use the command below to generate plots.
 bash ./plot_all_figures.sh
 ```
 
-## Detailed Steps
+## Detailed Steps for Artifacts
 
 ### Prerequisites
 Install RAPIDS RMM and Python dependencies.
@@ -108,7 +108,126 @@ make
 
 ### Run experiments
 
+#### Row/Conflict Sets (5 Random Banks)
 
+```bash
+bash run_row_sets.sh
+```
+
+#### Figure 2
+
+```bash
+bash run_fig2.sh
+```
+
+#### Figure 5 & 6
+
+```bash
+bash run_fig5_6.sh
+```
+
+#### Figure 8
+
+```bash
+bash run_fig8.sh
+```
+
+#### Figure 10
+
+```bash
+bash run_fig10.sh
+```
+
+#### Figure 11
+
+```bash
+bash run_fig11.sh
+```
+
+#### Figure 12 & Table 4
+
+```bash
+bash run_fig12_t4.sh
+```
+
+#### Figure 14
+
+```bash
+bash run_fig14.sh
+```
+
+#### Figure 15
+
+```bash
+bash run_fig15.sh
+```
+
+### Generate Plots
+
+After running the experiments, generate the plots in using the commands below. Generated PDFs can be found in respective folders: `./results/plots/fig*`.
+
+#### Figure 2:
+
+```bash
+python3 plot_fig2.py
+```
+
+#### Figure 5:
+
+```bash
+python3 plot_fig5a.py
+python3 plot_fig5b.py
+```
+
+#### Figure 6:
+
+```bash
+python3 plot_fig6.py
+```
+
+#### Figure 8:
+
+```bash
+python3 plot_fig8.py
+```
+
+#### Figure 10:
+
+```bash
+python3 plot_fig10a.py
+python3 plot_fig10b.py
+```
+
+#### Figure 11:
+
+```bash
+python3 plot_fig11.py
+```
+
+#### Figure 12:
+
+```bash
+python3 plot_fig12.py
+```
+
+#### Table 4:
+
+```bash
+bash plot_t4.sh
+```
+
+#### Figure 14:
+
+```bash
+python3 plot_fig14.py
+```
+
+#### Figure 15:
+
+```bash
+python3 plot_fig15.py
+```
+## Detailed Steps to Run Rowhammer Campagins
 
 ### Step 1: Obtain Row Addresses to Hammer
 
@@ -216,22 +335,6 @@ This entire exploit with all the bit-flips should take one day.
 Accuracy Degradation is stored for each bitflip in their respective folder in `exploit/*`. We in addition generate a `degredation_table.csv` that records the highest RAD reported per model per bitflip.
 
 You may find sample result in `sample_data` folder of each bitflip folder, a sample csv `exploit/sample_table.csv`, and a sample ASCII visualization of the csv table `exploit/sample_table_vis.txt`.
-
-## General Tips:
-1. The row buffer conflict code is hard to understand on its own. I suggest starting with `rbce_gen_time_main.cu` and working slowly through the code and how the GPU kernels work.
-2. To specify a large amount of memory in bytes:
-   - GiB
-      ```bash
-      $((<count> * (1<<30)))
-      ```
-   - MiB
-      ```bash
-      $((<count> * (1<<20)))
-      ```
-3. To retrieve the bank identifier/offset from **Bank Set**, use:
-   ```bash
-   sed '<NUM>q;d' BANK_SET.txt
-   ```
 
 ## Additional Notes
 

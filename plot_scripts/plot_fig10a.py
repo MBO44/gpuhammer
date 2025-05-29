@@ -5,8 +5,13 @@ import sys, os
 from math import pi
 
 HAMMER_ROOT = os.environ['HAMMER_ROOT']
-fileCount = len(sys.argv) - 2 # Minus the first and last
-it = float(sys.argv[fileCount+1])
+delay_files = [f"{HAMMER_ROOT}/results/fig10/delay_8w.txt",
+               f"{HAMMER_ROOT}/results/fig10/delay_12w.txt",
+               f"{HAMMER_ROOT}/results/fig10/delay_16w.txt",
+               f"{HAMMER_ROOT}/results/fig10/delay_24w.txt"
+]
+
+it = 10000
 timeList = []
 
 def read_file(filename):
@@ -17,8 +22,8 @@ def read_file(filename):
     x_values = list(range(len(y_values)))
     return x_values, z_values
 
-for i in range(fileCount):
-    timeList.append(read_file(sys.argv[i + 1])[1])
+for i in range(len(delay_files)):
+    timeList.append(read_file(delay_files[i])[1])
 
 
 fig,ax = plt.subplots()

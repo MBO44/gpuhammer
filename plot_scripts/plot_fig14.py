@@ -5,7 +5,7 @@ import math
 from matplotlib.widgets import Cursor
 
 HAMMER_ROOT = os.environ['HAMMER_ROOT']
-row_set_file = open(sys.argv[1])
+row_set_file = open(f"{HAMMER_ROOT}/results/row_sets/ROW_SET_0.txt")
 cmap = plt.get_cmap("tab10")
 markers = ['^', "P", "d", "*"]
 
