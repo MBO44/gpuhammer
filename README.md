@@ -30,9 +30,10 @@ You can reproduce our security and performance evaluations as follows.
 ## Steps for Artifact Generation
 
 ### 1. Clone the Repository
-Ensure you have already cloned the repository during the security analysis:
+Ensure you have already cloned the repository:
 ```bash
 git clone https://github.com/sith-lab/gpuhammer.git
+cd gpuhammer
 ```
 
 ## 2. GPU Setup
@@ -46,7 +47,6 @@ sudo reboot
 ```bash
 # Example usage: 
 #   bash ./util/init_cuda.sh 1800 7600
-cd gpuhammer
 bash ./util/init_cuda.sh <MAX_GPU_CLOCK> <MAX_MEMORY_CLOCK>
 ```
 
@@ -54,7 +54,6 @@ bash ./util/init_cuda.sh <MAX_GPU_CLOCK> <MAX_MEMORY_CLOCK>
 
 To undo the changes, run:
 ```bash
-cd gpuhammer
 bash ./util/reset_cuda.sh
 ```
 
@@ -62,7 +61,7 @@ bash ./util/reset_cuda.sh
 Run the following commands to install dependencies, build GPUHammer, and execute experiments.
 
 ```bash
-  cd gpuhammer
+  cd gpuhammer # Ensure you are in the respository root
   export HAMMER_ROOT=`pwd`
   bash ./run_artifact.sh
 ```
@@ -71,12 +70,45 @@ Run the following commands to install dependencies, build GPUHammer, and execute
 After completing the experiments, use the command below to generate plots.
 
 ```bash
-cd gpuhammer
 bash ./plot_all_figures.sh
 ```
 
-## General Steps of usage
-<!-- To understand some of the terminologies, gloss over my Report in [GitHub](https://github.com/ShaopengLin/GPU-RowHammer/blob/main/Row_Hammer_Summary.pdf) or [Typst](https://typst.app/project/rAVAM0FL3MxzFRAiYP29Cd). -->
+## Detailed Steps
+
+### Prerequisites
+Install RAPIDS RMM and Python dependencies.
+
+```bash
+bash ./run_setup.sh
+```
+
+If error occurs during setup, run the following to clean up left-over artifacts.
+
+```bash
+bash ./run_setup.sh clean
+```
+
+### Enable Anaconda RMM Development Environment
+You need to enable the RMM development manually when opening a terminal.
+
+```bash
+conda init
+source activate base
+conda activate rmm_dev
+```
+
+### Building GPUHammer
+Create the build environment using CMake:
+
+```bash
+cmake -S ./src -B ./src/out/build
+cd ./src/out/build
+make
+```
+
+### Run experiments
+
+
 
 ### Step 1: Obtain Row Addresses to Hammer
 
