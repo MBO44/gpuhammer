@@ -1,5 +1,3 @@
-bash $HAMMER_ROOT/util/init_cuda.sh 1800 7600
-
 # Variables
 num_agg=24
 num_warp=8

@@ -1,9 +1,5 @@
+#!/bin/bash
 # Run the synchronization test
-
-# Set the first parameter to <Stable Max Clock Rate> reported by run_timing_task.py
-# Set the second parameter to a stable memory clock rate
-bash $HAMMER_ROOT/util/init_cuda.sh 1800 7600 
-
 
 # Variables
 bank_id=256
