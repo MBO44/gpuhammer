@@ -19,10 +19,10 @@ mkdir -p $store_dir
 for model in alexnet vgg resnet dense inception; do
     echo "Processing $model"
 
-    >  $store_dir
+    >  $store_dir/${model}.txt
     shuf --random-source=<(yes 42) -i 0-$shift_range -n 50 | while read num; do
 
-        shift=$(($victim_segment_offset + (256 * $num)))
+        shift=$(($victim_byte_offset + (256 * $num)))
         printf "$num: ***********************\n"
 
         rowset_file="$HAMMER_ROOT/results/row_sets/ROW_SET_${bank_offset}.txt"
@@ -32,7 +32,7 @@ for model in alexnet vgg resnet dense inception; do
         sleep 2
         nohup $HAMMER_ROOT/src/out/build/hammer_manual_agg_right $rowset_file $((num_agg - 1)) $addr_step $iterations $aggressor_row $max_rowid $row_step $shift $num_warp $num_thread $delay 1 $count_iter >/dev/null 2>&1 &
         sleep 5
-        python3 $HAMMER_ROOT/util/run_imagenet_models.py $model att B2 $HAMMER_ROOT/results/fig12_t4/ $HAMMER_ROOT/src/out/build/liballoc.so "$HAMMER_ROOT/results/fig12_t4/B2/${model}.txt"
+        python3 $HAMMER_ROOT/util/run_imagenet_models.py $model att B2 $HAMMER_ROOT/results/fig12_t4/ $HAMMER_ROOT/src/out/build/liballoc.so $store_dir/${model}.txt
         sleep 5
         > memory_control.txt
         sleep 5

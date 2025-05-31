@@ -7,8 +7,8 @@ delay=58
 aggressor_row=13633
 min_rowid=$(($aggressor_row - 92))
 victim_row=13635
-victim_row_offset=2786835456
-aggressor_row_offset=2785753088
+victim_row_offset=10722126080
+aggressor_row_offset=10722126080
 shift_range=$((($victim_row_offset - $aggressor_row_offset) / 256))
 row_step=4
 count_iter=100
@@ -20,7 +20,7 @@ mkdir -p $store_dir
 for model in alexnet vgg resnet dense inception; do
     echo "Processing $model"
 
-    >  $store_dir
+    >  $store_dir/${model}.txt
     shuf --random-source=<(yes 42) -i 0-$shift_range -n 50 | while read num; do
 
         shift=$((256 * $num))
@@ -33,7 +33,7 @@ for model in alexnet vgg resnet dense inception; do
         sleep 2
         nohup $HAMMER_ROOT/src/out/build/hammer_manual_agg_left $rowset_file $((num_agg - 1)) $addr_step $iterations $min_rowid $victim_row $row_step $shift $num_warp $num_thread $delay 1 $count_iter >/dev/null 2>&1 &
         sleep 5
-        python3 $HAMMER_ROOT/util/run_imagenet_models.py $model att D1 $HAMMER_ROOT/results/fig12_t4/ $HAMMER_ROOT/src/out/build/liballoc.so "$HAMMER_ROOT/results/fig12_t4/D1/${model}.txt"
+        python3 $HAMMER_ROOT/util/run_imagenet_models.py $model att D1 $HAMMER_ROOT/results/fig12_t4/ $HAMMER_ROOT/src/out/build/liballoc.so $store_dir/${model}.txt
         sleep 5
         > memory_control.txt
         sleep 5
