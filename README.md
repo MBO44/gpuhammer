@@ -40,6 +40,8 @@ cd gpuhammer
 For the Rowhammer attack, a prerequiste is **disabling ECC**, if that is not already done by default on the GPU. If it is enabled, use the following commands to disable:
 ```bash
 sudo nvidia-smi -e 0
+rmmod nvidia_drm 
+rmmod nvidia_modeset
 sudo reboot
 ```
 
@@ -169,6 +171,7 @@ After running the experiments, generate the plots in using the commands below. G
 #### Figure 2:
 
 ```bash
+cd plot_scripts
 python3 plot_fig2.py
 ```
 
@@ -265,7 +268,7 @@ Conflict set is a list of array offsets (addresses) that map to rows that confli
       python3 ./util/run_timing_task.py conf_set \
       --threshold 27 \
       --step 256 \
-      --it 10
+      --it 15
       ```
    -  ```
       852224
@@ -285,7 +288,7 @@ Row Set is a matrix of offsets, where each line lists the address offsets mappin
    -  ```bash
       python3 ./util/run_timing_task.py row_set CONF_SET.txt \
       --threshold 27 \
-      --it 10
+      --it 15
       ```
    -  ```
         852224	852736	868352  ...
@@ -299,7 +302,7 @@ Row Set is a matrix of offsets, where each line lists the address offsets mappin
       python3 ./util/run_timing_task.py bank_set \ 
       --max 5 \
       --step 256 \
-      --it 10
+      --it 15
       ```
    -  ```
       0
@@ -319,8 +322,8 @@ bash ./util/run_delay.sh
 You can visualize the result by running 
 ```bash
 # Example usage:
-#  python3 util/plot_delay.py 10000 1407 256 24
-python3 plot_delay.py <iterations> <trefi> <bank_id> <num_aggressors>
+#  python3 ./util/plot_delay.py 10000 1407 256 24
+python3 ./util/plot_delay.py <iterations> <trefi> <bank_id> <num_aggressors>
 ```
 
 The first parameter is the number of iterations, which should match the `iterations` variable in the bash script. The second parameter is the tREFI period in nanoseconds, which is 1407 for the A6000. The fourth and onward parameters specify the number of aggressors. You can plot multiple aggressor configurations on the same plot.
@@ -332,10 +335,10 @@ On the output plot, observe that there is a flat-lined area in the middle. This 
 The helper script `run_hammer.sh` is available in the `util` folder. Again, we assume a file structure for the row set files and log files, so please update the relevant variables. In addition, fill in the `delay` configuration you obtained from the previous step. You can run the script with
 
 ```bash
-sudo bash run_hammer.sh
+sudo bash ./util/run_hammer.sh
 ```
 
-The result of your hammering can be found at `log/sweep/<#_of_aggressors>agg_b<bank_id>_<vic_pat><agg_pat>.log`. Any bitflips will be reported in the form `Observed Bit-Flip ...` in the log file.
+The result of your hammering can be found at `./src/log/sweep/<#_of_aggressors>agg_b<bank_id>_<vic_pat><agg_pat>.log`. Any bitflips will be reported in the form `Observed Bit-Flip ...` in the log file.
 
 ### Campaign Configurations
 
@@ -346,7 +349,7 @@ In our systematic study, we ran attacks with `num_agg = 8, 12, 16, 20, 24` and `
 - **20-sided**: 10 warps, 2 threads, 1 round
 - **24-sided**: 8 warps, 3 threads, 1 round
 
-Each hammer takes approximately 600 ms to run if we treat the entire bank as victim rows. Alternatively, to speed up the hammers, you can comment and uncomment some code according to line 110 & 111 of `hammer/gpu_hammer.cu`. This verifies only the rows in the neighborhood of the hammered aggressors for bitflips, reducing the time for a hammer kernel to around 200 ms. With this setup, it takes approximately 5 hours to complete a sweep on one bank with a single `num_agg` configuration for both data patterns.
+Each hammer takes approximately 600 ms to run if we treat the entire bank as victim rows. Alternatively, to speed up the hammers, you can comment and uncomment some code according to line 110 & 111 of `./src/hammer/gpu_hammer.cu`. This verifies only the rows in the neighborhood of the hammered aggressors for bitflips, reducing the time for a hammer kernel to around 200 ms. With this setup, it takes approximately 5 hours to complete a sweep on one bank with a single `num_agg` configuration for both data patterns.
 
 #### Existing Bitflips
 
@@ -358,19 +361,57 @@ sudo bash ./util/run_known_flips.sh
 
 ### Step 4: Perform Time Sliced Exploit
 
-Once you have found some bit-flips, you can run an exploit, targeting these bit-flips in a ML model weight.
+Once you have found some **0->1** bit-flips that maps to the Most Significant Bit in FP16, you can run an exploit, targeting these bit-flips in a ML model weight. We provde sample exploit scripts `run_hammer_manual_<bitflip>.sh` in `data_scripts/fig12_t4` that streamline the process. 
 
-#### Left-side Bitflip
+#### Finding the Proper Aggressor Row for Victim Row
 
+When a bit-flip is observed, as shown in the paper, it can only be trigger by aggressor rows on one side. Once you have observed a set of aggressors (As) that triggers the bitflip in a victim (V), usually in the form of:
 
+```
+... A - - - A - V - A - - - A ...
+```
 
-#### Right-side Bitflip
+You can find out which aggressor triggered it by shifting the pattern by changing `min_rowid`:
 
+```
+Left Aggressor:   ... A - - - A - V
+Right Aggressor:  V - A - - - A ...
+```
 
+#### Aggressor on the Left/Top of Victim
+
+To exploit given a left side aggressor, we can create a script based on either the `run_hammer_manual_B1.sh` or `run_hammer_manual_D1.sh`. You will need to modify the following parameters based on information of your observed bitflip.
+
+- **aggressor_row:** Row id of the aggressor row left of the victim.
+- **victim_row:** Row id of the victim.
+- **victim_row_offset:** Offset of the victim row in Row Set. (Note Row id starts at 0, but Row Set text file line number may read starting line 1)
+- **aggressor_row_offset:** Offset of the aggressor row in Row Set. (Note Row id starts at 0, but Row Set text file line number may read starting line 1)
+- **store_dir:** Location to store your exploit results.
+
+```bash
+bash ./data_scripts/fig12_t4/run_hammer_manual_<name>.sh
+```
+
+You may find the results of your exploits in your `store_dir`, listed in `<model>.txt`.
+
+#### Aggressor on the Right/Bottom of Victim
+
+To exploit given a right side aggressor, we can create a script based on either the `run_hammer_manual_B2.sh` or `run_hammer_manual_D3.sh`. You will need to modify the following parameters based on information of your observed bitflip. The parameters are slightly different than what you have for left side:
+
+- **aggressor_row:** Row id of the aggressor row left of the victim.
+- **victim_byte_offset:** The exact byte offset of the bitflip.
+- **aggressor_row_offset:** Offset of the aggressor row in Row Set. (Note Row id starts at 0, but Row Set text file line number may read starting line 1)
+- **store_dir:** Location to store your exploit results.
+
+```bash
+bash ./data_scripts/fig12_t4/run_hammer_manual_<name>.sh
+```
+
+You may find the results of your exploits in your `store_dir`, listed in `<model>.txt`.
 
 #### Exploit with Existing Bitflips
 
-The scripts in `./data_scripts/fig12_t4` will run the exploit on ImageNet models with specific bitflips we found in our A6000 GPU (B1, B2, D1, and D3). The model accuracy will be recorded in `results/fig12_t4/<bitflip>`.
+The scripts in `./data_scripts/fig12_t4` will run the exploit on ImageNet models with specific bitflips we found in our A6000 GPU (B1, B2, D1, and D3). The model accuracy will be recorded in `./results/fig12_t4/<bitflip>`.
 
 ```bash
 bash ./data_scripts/fig12_t4/run_hammer_manual_<bitflip>.sh
