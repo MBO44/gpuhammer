@@ -4,7 +4,7 @@
 /**
  * @brief Sets the address byte identified by the thread offset to value.
  *
- * @param addr_arr GPU address value
+ * @param addr_arr array of GPU addresses
  * @param value 8-bit byte value
  * @param b_len maximum offset
  */
@@ -21,6 +21,13 @@ __global__ void set_address_kernel(uint8_t *addr_arr, uint64_t value,
   }
 }
 
+/**
+ * @brief Discard the given address addr for the step size, e.g.
+ * if step=256, we will call discard on addr and addr + 128
+ *
+ * @param addr GPU address value
+ * @param step step size
+ */
 __global__ void clear_address_kernel(uint8_t *addr, uint64_t step)
 {
   for (uint64_t i = 0; i < step; i += 128)
@@ -29,6 +36,14 @@ __global__ void clear_address_kernel(uint8_t *addr, uint64_t step)
                  "}" ::"l"(addr));
 }
 
+/**
+ * @brief Verify that a particular byte is the expected target value.
+ *
+ * @param addr_arr array of GPU addresses
+ * @param target expected value of the byte
+ * @param b_len number of bytes in total, used for indexing
+ * @param has_diff return value for host to know whether a difference occured
+ */
 __global__ void verify_result_kernel(uint8_t **addr_arr, uint64_t target,
   uint64_t b_len, bool *has_diff)
 {

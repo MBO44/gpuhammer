@@ -5,8 +5,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <vector>
-#ifndef GPU_ROWHAMMER_HAMMER_UTIL_CUH
-#define GPU_ROWHAMMER_HAMMER_UTIL_CUH
+#ifndef GPU_ROWHAMMER_RH_UTIL_CUH
+#define GPU_ROWHAMMER_RH_UTIL_CUH
 
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
@@ -33,11 +33,6 @@ enum MEM_PAT
 extern std::string CLI_PREFIX;
 
 RowList read_row_from_file(std::ifstream &file, const uint8_t *base_addr);
-
-std::vector<uint64_t> get_random_victims(RowList &rows, uint64_t v_count);
-
-std::vector<uint64_t> get_random_sequential_victims(RowList &rows,
-                                                    uint64_t v_count);
 
 std::vector<uint64_t> get_sequential_victims(RowList &rows, uint64_t row_id,
                                              uint64_t v_count);
@@ -68,8 +63,6 @@ void evict_L2cache(uint8_t *layout);
 
 void print_time (uint64_t time_ns);
 
-void initialize_rows(RowList &rows, uint64_t b_count);
-
 uint64_t toNS(uint64_t time);
 
 std::tuple<int, int> get_dim_from_size(uint64_t size);
@@ -85,4 +78,4 @@ template <typename T> std::string vector_str(const std::vector<T> &vec)
 }
 
 
-#endif /* GPU_ROWHAMMER_HAMMER_UTIL_CUH */
+#endif /* GPU_ROWHAMMER_RH_UTIL_CUH */

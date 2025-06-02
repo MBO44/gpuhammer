@@ -2,8 +2,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <vector>
-#ifndef GPU_ROWHAMMER_CUDA_HELPERS_CUH
-#define GPU_ROWHAMMER_CUDA_HELPERS_CUH
+#ifndef GPU_ROWHAMMER_RH_KERNELS_CUH
+#define GPU_ROWHAMMER_RH_KERNELS_CUH
 
 __global__ void set_address_kernel(uint8_t *addr_arr, uint64_t value,
                                    uint64_t b_len);
@@ -31,4 +31,4 @@ __global__ void rh_threshold_kernel(uint8_t **agg_arr, uint8_t **dum_arr,
                                     uint64_t* time, 
                                     uint64_t agg_period, uint64_t dum_period);
 
-#endif /* GPU_ROWHAMMER_CUDA_HELPERS_CUH */
+#endif /* GPU_ROWHAMMER_RH_KERNELS_CUH */

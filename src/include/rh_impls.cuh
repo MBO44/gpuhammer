@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <rh_utils.cuh>
 
-#ifndef GPU_ROWHAMMER_HAMMER_KERNELS_CUH
-#define GPU_ROWHAMMER_HAMMER_KERNELS_CUH
+#ifndef GPU_ROWHAMMER_RH_IMPLS_CUH
+#define GPU_ROWHAMMER_RH_IMPLS_CUH
 
 uint64_t start_simple_hammer(RowList &rows, std::vector<uint64_t> &agg_vec,
                              uint64_t it);
@@ -22,4 +22,4 @@ uint64_t start_trh_hammer(RowList &rows, std::vector<uint64_t> &agg_vec,
                           uint64_t delay, uint64_t period,
                           uint64_t agg_period, uint64_t dum_period);
                           
-#endif /* GPU_ROWHAMMER_HAMMER_KERNELS_CUH */
+#endif /* GPU_ROWHAMMER_RH_IMPLS_CUH */

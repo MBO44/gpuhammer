@@ -48,57 +48,6 @@ RowList read_row_from_file(std::ifstream &file, const uint8_t *base_addr)
   return rows;
 }
 
-/**
- * @brief Return a vector of v_count victims chosen randomly, where each victim
- * are 1 row apart from each other.
- *
- * @param rows
- * @param v_count
- * @return std::vector<uint64_t>
- */
-std::vector<uint64_t> get_random_victims(RowList &rows, uint64_t v_count)
-{
-
-  /* 1. Ignore first and last row for two sided hammer, between 1 and size-1 */
-  /* 2. choose only from non-neighboring rows, i.e. odd numbers [1, size-1] */
-
-  uint64_t num_between = rows.size() - 2;
-  uint64_t num_valid_victim = std::ceil(num_between / 2.0);
-  std::vector<uint64_t> vic_vec(num_valid_victim);
-
-  /* Initialize as odd numbers starting from 1*/
-  std::generate(vic_vec.begin(), vic_vec.end(),
-                [value = -1]() mutable -> uint64_t
-                {
-                  value += 2;
-                  return value;
-                });
-
-  /* Shuffle the vector at random */
-  std::mt19937 generator(std::time(0));
-  std::shuffle(vic_vec.begin(), vic_vec.end(), std::move(generator));
-  return {vic_vec.rbegin(), vic_vec.rbegin() + v_count};
-}
-
-std::vector<uint64_t> get_random_sequential_victims(RowList &rows,
-                                                    uint64_t v_count)
-{
-  uint64_t latest_row = rows.size() - 2 * v_count;
-  std::cout << latest_row << '\n';
-  std::mt19937 generator(std::time(0));
-  std::uniform_int_distribution<> random_range(1, latest_row);
-  auto random_row_id = random_range(generator);
-
-  std::vector<uint64_t> vic_vec(v_count);
-  std::generate(vic_vec.begin(), vic_vec.end(),
-                [value = random_row_id - 2]() mutable -> uint64_t
-                {
-                  value += 2;
-                  return value;
-                });
-  return get_sequential_victims(rows, random_row_id, v_count);
-}
-
 std::vector<uint64_t> get_sequential_victims(RowList &rows, uint64_t row_id,
                                              uint64_t v_count)
 {
@@ -362,23 +311,6 @@ uint64_t find_diff(const std::vector<uint8_t> &vec1,
     }
   }
   return diff_count;
-}
-
-/* Set each addr in row to a random value. */
-void initialize_rows(RowList &rows, uint64_t b_count) {
-  static int numBlock = std::get<0>(get_dim_from_size(b_count));
-  static int numThreads = std::get<1>(get_dim_from_size(b_count));
-  std::cout << "Block: " << numBlock << " Threads: " << numThreads << '\n';
-
-  for (auto &row : rows) {
-    for (auto addr : row) {
-
-      uint64_t value = rand();
-      set_address_kernel<<<numBlock, numThreads>>>(addr, value, b_count);
-      gpuErrchk(cudaPeekAtLastError());
-
-    }
-  }
 }
 
 /**

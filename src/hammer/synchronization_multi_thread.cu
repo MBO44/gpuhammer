@@ -1,7 +1,8 @@
 #include <rh_utils.cuh>
+#include <rh_impls.cuh>
+
 #include <atomic>
 #include <chrono>
-#include <rh_impls.cuh>
 #include <fstream>
 #include <iostream>
 #include <pthread.h>
