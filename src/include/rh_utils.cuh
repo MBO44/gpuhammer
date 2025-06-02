@@ -50,14 +50,9 @@ void set_rows(RowList &rows, std::vector<uint64_t> &target_rows, uint8_t pat,
 
 void clear_L2cache_rows(RowList &rows, std::vector<uint64_t> &target_rows, uint64_t step);
 
-bool verify_content(RowList &rows, std::vector<uint64_t> &victims,
-                    std::vector<uint64_t> &aggressors, uint64_t b_count,
-                    uint8_t pat);
-
 bool verify_all_content(RowList &rows, std::vector<uint64_t> &victims,
                         std::vector<uint64_t> &aggressors, 
                         const uint64_t b_count, const uint8_t pat);
-void sleep_for(uint64_t time, char time_type);
 
 void evict_L2cache(uint8_t *layout);
 

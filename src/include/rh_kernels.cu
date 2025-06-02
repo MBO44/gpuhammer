@@ -42,7 +42,7 @@ __global__ void clear_address_kernel(uint8_t *addr, uint64_t step)
  * @param addr_arr array of GPU addresses
  * @param target expected value of the byte
  * @param b_len number of bytes in total, used for indexing
- * @param has_diff return value for host to know whether a difference occured
+ * @return @param has_diff return value for host to know whether a difference occured
  */
 __global__ void verify_result_kernel(uint8_t **addr_arr, uint64_t target,
   uint64_t b_len, bool *has_diff)
@@ -70,6 +70,12 @@ __global__ void verify_result_kernel(uint8_t **addr_arr, uint64_t target,
   }
 }
 
+/**
+ * @brief Evict the L2 Cache by iterating through a large portion of the memory space
+ *
+ * @param addr start address of the GPU memory space
+ * @param size size of the memory space to iterate
+ */
 __global__ void evict_kernel(uint8_t *addr, uint64_t size)
 { 
   uint64_t temp, ret = 0;
@@ -86,34 +92,47 @@ __global__ void evict_kernel(uint8_t *addr, uint64_t size)
   if (threadIdx.x == 0) printf("%ld\n", ret);
 }
 
+/**
+ * @brief Naive implementation of Rowhammer. Every thread accesses a unique address
+ * in addr_arr for count amount of times.
+ *
+ * @param addr_arr array of GPU addresses to hammer.
+ * @param count number of times to iterate.
+ * @return @param time spent for the entire hammering.
+ */
 __global__ void simple_hammer_kernel(uint8_t **addr_arr, uint64_t count,
                                      uint64_t *time)
 {
   uint64_t temp __attribute__((unused));
   uint64_t ce, cs;
   uint8_t *addr = *(addr_arr + threadIdx.x);
+
   cs = clock64();
   for (; count--;)
   {
     asm volatile("{\n\t"
                  "discard.global.L2 [%0], 128;\n\t"
                  "}" ::"l"(addr));
-    // clock_start = clock64();
+
     asm volatile("{\n\t"
                  "ld.u8.global.volatile %0, [%1];\n\t"
                  "}"
                  : "=l"(temp)
                  : "l"(addr));
-    // clock_end = clock64();
-    // printf("%ld, %ld\n", clock_end - clock_start, temp);
   }
   ce = clock64();
-  // if (threadIdx.x == 0){
-  //   printf("%ld, %ld\n", ce - cs, temp)
-  //   }
   *time = ce - cs;
 }
 
+/**
+ * @brief Simulating a single threaded hammering in CPU. Only have 1 thread
+ * and iterate through the addr_arr in order for count times.
+ *
+ * @param addr_arr array of GPU addresses to hammer.
+ * @param count number of times to iterate.
+ * @param n number of entries in addr_arr
+ * @return @param time spent for the entire hammering.
+ */
 __global__ void single_thread_hammer_kernel(uint8_t **addr_arr, uint64_t count, uint64_t n, uint64_t *time)
 {
   uint64_t temp __attribute__((unused));
@@ -137,6 +156,15 @@ __global__ void single_thread_hammer_kernel(uint8_t **addr_arr, uint64_t count, 
   *time = ce - cs;
 }
 
+/**
+ * @brief Hammering with multi-threaded approach and refresh synchronization.
+ *
+ * @param addr_arr array of GPU addresses to hammer.
+ * @param count number of times to iterate a round of hammering process (period + delay)
+ * @param delay amount of additions
+ * @param period how many rounds of hammering before we add delay
+ * @return @param time spent for the entire hammering.
+ */
 __global__ void sync_hammer_kernel(uint8_t **addr_arr, uint64_t count,
                                    uint64_t delay, uint64_t period,
                                    uint64_t *time)
@@ -171,6 +199,18 @@ __global__ void sync_hammer_kernel(uint8_t **addr_arr, uint64_t count,
   *time = ce - cs;
 }
 
+/**
+ * @brief Hammering with multi-warp approach and refresh synchronization.
+ *
+ * @param addr_arr array of GPU addresses to hammer.
+ * @param count number of times to iterate a round of hammering process (period + delay)
+ * @param n total number of warps
+ * @param k total number of threads
+ * @param len total number of aggressors (may be different than n * k)
+ * @param delay amount of additions
+ * @param period how many rounds of hammering before we add delay
+ * @return @param time spent for the entire hammering.
+ */
 __global__ void warp_simple_hammer_kernel(uint8_t **addr_arr, uint64_t count, 
                                           uint64_t n, uint64_t k, uint64_t len, 
                                           uint64_t delay, uint64_t period, 
@@ -184,12 +224,14 @@ __global__ void warp_simple_hammer_kernel(uint8_t **addr_arr, uint64_t count,
   if (warpId < n && threadId_in_warp < k && threadId_in_warp + warpId * k < len)
   {
     uint8_t *addr = *(addr_arr + threadId_in_warp + warpId * k);
-    // uint8_t *addr = *(addr_arr + warpId);
     asm volatile("{\n\t"
                "discard.global.L2 [%0], 128;\n\t"
                "}" ::"l"(addr));
+
+    // Use warp 0 thread 0 as the timer to avoid extra delays
     if (threadIdx.x == 0)
       cs = clock64();
+
     __syncthreads();
     for (;count--;)
     {
@@ -206,7 +248,7 @@ __global__ void warp_simple_hammer_kernel(uint8_t **addr_arr, uint64_t count,
         ret += temp;
       }
     }
-    // __threadfence_block();
+
     __syncthreads();
     if (threadIdx.x == 0)
       ce = clock64();

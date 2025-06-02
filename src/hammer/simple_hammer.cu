@@ -64,11 +64,5 @@ int main(int argc, char *argv[])
   time_file << time;
   time_file.close();
 
-  /* Verify result */
-  clear_L2cache_rows(rows, victims, step);
-  bool res = verify_content(rows, victims, aggressors, step, MEM_PAT::VICTIM_PAT);
-  std::cout << CLI_PREFIX << (res ? "Observed Bit-Flip" : "No Bit-Flip")
-            << "\n";
-
   return 0;
 }

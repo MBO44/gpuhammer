@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
       auto start_hammer = std::chrono::high_resolution_clock::now();
 
       /* Start the hammering and measure the time */
-      uint64_t time = start_warp_simple_hammer(rows, aggressors, it, n, k, aggressors.size(), delay, period);
+      uint64_t time = start_multi_warp_hammer(rows, aggressors, it, n, k, aggressors.size(), delay, period);
       print_time(time);
       std::cout << CLI_PREFIX << "Average time per round: " << time / it << std::endl;
 

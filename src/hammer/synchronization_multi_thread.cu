@@ -76,18 +76,6 @@ int main(int argc, char *argv[])
     time_file << time << '\n';
     print_time(time);
     std::cout << CLI_PREFIX << "Average time per round:" << time / it << '\n';
-
-    /* Verify result */
-    // clear_L2cache_rows(rows, victims, step);
-    // bool res = verify_content(rows, victims, aggressors, step);
-    // std::cout << CLI_PREFIX << (res ? "Observed Bit-Flip" : "No Bit-Flip")
-    //           << "\n";
-
-    /* Clean up and prepare for next launch*/
-    // set_rows(rows, aggressors, MEM_PAT::VICTIM_PAT, step);
-    // if (res) {
-    //   set_rows(rows, all_vics, MEM_PAT::VICTIM_PAT, step);
-    // }
   }
 
   time_file.close();

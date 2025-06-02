@@ -14,8 +14,6 @@
 
 static void set_row(Row &row, uint8_t pat, uint64_t b_count);
 static void clear_L2cache_row(Row &row, uint64_t step);
-static uint64_t find_diff(const std::vector<uint8_t> &vec1,
-                          const std::vector<uint8_t> &vec2);
 inline uint64_t CurrentTime_nanoseconds()
 {
   return std::chrono::duration_cast<std::chrono::nanoseconds>(
@@ -40,10 +38,8 @@ RowList read_row_from_file(std::ifstream &file, const uint8_t *base_addr)
     rows.emplace_back();
     std::stringstream ss;
     ss << buf;
-    while (std::getline(ss, buf, '\t')){
+    while (std::getline(ss, buf, '\t'))
       rows.back().push_back((uint8_t *)(base_addr + std::stoull(buf)));
-      // std::cout << static_cast<const void*>(base_addr + std::stoull(buf)) << '\n';
-    }
   }
   return rows;
 }
@@ -126,60 +122,6 @@ void clear_L2cache_rows(RowList &rows, std::vector<uint64_t> &target_rows, uint6
     clear_L2cache_row(rows[v], step);
 }
 
-/**
- * @brief Return whether the victim has bitflip or not.
- *
- * @param rows
- * @param victims
- * @param aggressors
- * @param b_count
- * @return true
- * @return false
- */
-bool verify_content(RowList &rows, std::vector<uint64_t> &victims,
-                    std::vector<uint64_t> &aggressors, uint64_t b_count,
-                    uint8_t pat)
-{
-  /* Expected constants */
-  const std::vector<uint8_t> vic_exp(b_count, pat);
-
-  uint8_t value[b_count];
-  std::vector<uint64_t> total_diff;
-
-  /* Count the number of bitflips per victim */
-  for (const auto v : victims)
-  {
-    uint64_t total_vic_diff = 0;
-    for (const auto addr : rows[v])
-    {
-      cudaMemcpy(&value, addr, b_count, cudaMemcpyDeviceToHost);
-      cudaDeviceSynchronize();
-      std::vector<uint8_t> vic_mem{value, value + b_count};
-      total_vic_diff += find_diff(vic_exp, vic_mem);
-    }
-
-    if (std::count(aggressors.begin(), aggressors.end(), v) == 0) {
-      total_diff.push_back(total_vic_diff);
-    } else {
-      total_diff.push_back(0);
-    }
-    
-  }
-
-  /* Report to user */
-  bool has_diff = false;
-  for (auto i = 0; i < total_diff.size(); i++)
-  {
-    if (total_diff[i] != 0)
-    {
-      std::cout << CLI_PREFIX << "Victim " << victims[i] << " has a total bitflip of "
-                << total_diff[i] << '\n';
-      has_diff = true;
-    }
-  }
-  return has_diff;
-}
-
 bool verify_all_content(RowList &rows, std::vector<uint64_t> &victims,
                         std::vector<uint64_t> &aggressors, 
                         const uint64_t b_count, const uint8_t pat)
@@ -211,32 +153,6 @@ bool verify_all_content(RowList &rows, std::vector<uint64_t> &victims,
   cudaMemcpy(&diff, diff_device, sizeof(bool *), cudaMemcpyDeviceToHost);
   cudaFree(diff_device);
   return diff;
-}
-
-/**
- * @brief Sleeps the curent thread for time time_type amount.
- *
- * @param time
- * @param time_type {'s', 'm', 'h'}
- */
-void sleep_for(uint64_t time, char time_type)
-{
-  std::cout << CLI_PREFIX << "Hammering for " << time << time_type << "\n";
-  switch (time_type)
-  {
-  case 'h':
-    std::this_thread::sleep_for(std::chrono::hours(time));
-    break;
-  case 'm':
-    std::this_thread::sleep_for(std::chrono::minutes(time));
-    break;
-  case 's':
-    std::this_thread::sleep_for(std::chrono::seconds(time));
-    break;
-  default:
-    exit(-1);
-    break;
-  }
 }
 
 /**
@@ -292,25 +208,6 @@ void clear_L2cache_row(Row &row, uint64_t step)
 {
   for (auto addr : row)
     clear_address_kernel<<<1, 1>>>(addr, step);
-}
-
-uint64_t find_diff(const std::vector<uint8_t> &vec1,
-                   const std::vector<uint8_t> &vec2)
-{
-  uint64_t diff_count = 0;
-
-  for (auto i = 0; i < vec1.size(); i++)
-  {
-    uint8_t diff = vec1[i] ^ vec2[i];
-    for (int j = 0; j < 8; ++j)
-    {
-      if (diff & (1 << j))
-      {
-        ++diff_count;
-      }
-    }
-  }
-  return diff_count;
 }
 
 /**
