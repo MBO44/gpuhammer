@@ -14,3 +14,5 @@ for folder in D1 D3 B1 B2; do
         echo "$folder,$(basename "$file" .txt),$max_row" >> "$output_file"
     done
 done
+
+column -s, -t < $output_file > t4_table.txt
