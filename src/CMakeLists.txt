@@ -24,30 +24,30 @@ add_library(alloc SHARED ./exploit/allocator.cu)
 target_link_libraries(alloc PRIVATE rmm::rmm)
 
 # RBCE
-add_library(rbce_lib row_buffer_conflict_exp/rbce_n_conflict_exp.cu ./include/cuda_helpers.cu)
+add_library(re_lib ./re_gddr/drama_conflict_prober.cu ./include/cuda_helpers.cu)
 
 # Get Conflict Set
-add_executable(rbce_conf_set ./row_buffer_conflict_exp/rbce_conf_set_main.cu)
-target_link_libraries(rbce_conf_set PUBLIC rbce_lib)
+add_executable(conf_set ./re_gddr/conf_set_main.cu)
+target_link_libraries(conf_set PUBLIC re_lib)
 
 # Get Row Set
-add_executable(rbce_row_set ./row_buffer_conflict_exp/rbce_row_set_main.cu)
-target_link_libraries(rbce_row_set PUBLIC rbce_lib)
+add_executable(row_set ./re_gddr/row_set_main.cu)
+target_link_libraries(row_set PUBLIC re_lib)
 
 # Get Bank Set
-add_executable(rbce_get_banks ./row_buffer_conflict_exp/rbce_get_banks_main.cu)
-target_link_libraries(rbce_get_banks PUBLIC rbce_lib)
+add_executable(get_banks ./re_gddr/get_banks_main.cu)
+target_link_libraries(get_banks PUBLIC re_lib)
 
 # Get Timing values
-add_executable(rbce_gen_time ./row_buffer_conflict_exp/rbce_gen_time_main.cu)
-target_link_libraries(rbce_gen_time PUBLIC rbce_lib)
+add_executable(gen_time ./re_gddr/gen_time_main.cu)
+target_link_libraries(gen_time PUBLIC re_lib)
 
 # Get Timing values
-add_executable(rbce_gen_time_same ./row_buffer_conflict_exp/rbce_gen_time_same.cu)
-target_link_libraries(rbce_gen_time_same PUBLIC rbce_lib)
+add_executable(gen_time_same ./re_gddr/gen_time_same_main.cu)
+target_link_libraries(gen_time_same PUBLIC re_lib)
 
-add_executable(rbce_load ./row_buffer_conflict_exp/rbce_load_main.cu)
-target_link_libraries(rbce_load PUBLIC rbce_lib)
+add_executable(load_modifiers ./re_gddr/load_modifiers_main.cu)
+target_link_libraries(load_modifiers PUBLIC re_lib)
 
 # Hammer
 add_library(hammer_lib ./include/cuda_helpers.cu ./include/hammer_util.cu ./include/hammer_kernels.cu)
@@ -59,43 +59,43 @@ target_link_libraries(simple_hammer PRIVATE hammer_lib)
 target_link_libraries(simple_hammer PRIVATE Threads::Threads)
 
 add_executable(sync_delay ./hammer/synchronization.cu)
-target_link_libraries(sync_delay PUBLIC rbce_lib hammer_lib)
+target_link_libraries(sync_delay PUBLIC re_lib hammer_lib)
 target_link_libraries(sync_delay PRIVATE Threads::Threads)
 
 add_executable(mt_sync_delay ./hammer/synchronization_multi_thread.cu)
-target_link_libraries(mt_sync_delay PUBLIC rbce_lib hammer_lib)
+target_link_libraries(mt_sync_delay PUBLIC re_lib hammer_lib)
 target_link_libraries(mt_sync_delay PRIVATE Threads::Threads)
 
 add_executable(st_sync_delay ./hammer/synchronization_single_thread.cu)
-target_link_libraries(st_sync_delay PUBLIC rbce_lib hammer_lib)
+target_link_libraries(st_sync_delay PUBLIC re_lib hammer_lib)
 target_link_libraries(st_sync_delay PRIVATE Threads::Threads)
 
 add_executable(gpu_hammer ./hammer/gpu_hammer.cu)
-target_link_libraries(gpu_hammer PUBLIC rbce_lib hammer_lib)
+target_link_libraries(gpu_hammer PUBLIC re_lib hammer_lib)
 target_link_libraries(gpu_hammer PRIVATE Threads::Threads)
 
 add_executable(trr_sampler ./hammer/trr_sampler_size.cu)
-target_link_libraries(trr_sampler PUBLIC rbce_lib hammer_lib)
+target_link_libraries(trr_sampler PUBLIC re_lib hammer_lib)
 target_link_libraries(trr_sampler PRIVATE Threads::Threads)
 
 add_executable(trh ./hammer/trh.cu)
-target_link_libraries(trh PUBLIC rbce_lib hammer_lib)
+target_link_libraries(trh PUBLIC re_lib hammer_lib)
 target_link_libraries(trh PRIVATE Threads::Threads)
 
 add_executable(hammer_manual_agg_left ./exploit/hammer_manual_agg_left.cu)
-target_link_libraries(hammer_manual_agg_left PUBLIC rbce_lib hammer_lib)
+target_link_libraries(hammer_manual_agg_left PUBLIC re_lib hammer_lib)
 target_link_libraries(hammer_manual_agg_left PRIVATE Threads::Threads CUDA::cuda_driver)
 target_link_libraries(hammer_manual_agg_left PRIVATE rmm::rmm)
 target_link_libraries(hammer_manual_agg_left PRIVATE alloc)
 
 add_executable(hammer_manual_agg_right ./exploit/hammer_manual_agg_right.cu)
-target_link_libraries(hammer_manual_agg_right PUBLIC rbce_lib hammer_lib)
+target_link_libraries(hammer_manual_agg_right PUBLIC re_lib hammer_lib)
 target_link_libraries(hammer_manual_agg_right PRIVATE Threads::Threads CUDA::cuda_driver)
 target_link_libraries(hammer_manual_agg_right PRIVATE rmm::rmm)
 target_link_libraries(hammer_manual_agg_right PRIVATE alloc)
 
 add_executable(hammer_mem_manage ./exploit/hammer_mem_manage.cu)
-target_link_libraries(hammer_mem_manage PUBLIC rbce_lib hammer_lib)
+target_link_libraries(hammer_mem_manage PUBLIC re_lib hammer_lib)
 target_link_libraries(hammer_mem_manage PRIVATE Threads::Threads CUDA::cuda_driver)
 target_link_libraries(hammer_mem_manage PRIVATE rmm::rmm)
 target_link_libraries(hammer_mem_manage PRIVATE alloc)
