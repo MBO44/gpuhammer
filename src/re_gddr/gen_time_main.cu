@@ -1,6 +1,9 @@
 #include "drama_conflict_prober.cuh"
 #include <iostream>
 
+
+std::string CLI_PREFIX = "(gen-time): ";
+
 int
 main (int argc, char *argv[])
 {

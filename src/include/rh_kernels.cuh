@@ -17,7 +17,7 @@ __global__ void verify_result_kernel(uint8_t **addr_arr, uint64_t target,
 
 __global__ void simple_hammer_kernel(uint8_t **addr_arr, uint64_t count, uint64_t* time);
 
-__global__ void single_thread_hammer(uint8_t **addr_arr, uint64_t count, uint64_t n, uint64_t *time);
+__global__ void single_thread_hammer_kernel(uint8_t **addr_arr, uint64_t count, uint64_t n, uint64_t *time);
 
 __global__ void sync_hammer_kernel(uint8_t **addr_arr, uint64_t count,
                                    uint64_t delay, uint64_t period,

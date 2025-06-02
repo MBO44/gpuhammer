@@ -19,8 +19,13 @@ find_package(Threads REQUIRED)
 add_library(alloc SHARED ./exploit/allocator.cu)
 target_link_libraries(alloc PRIVATE rmm::rmm)
 
+# Hammer
+add_library(hammer_lib ./include/rh_kernels.cu ./include/rh_utils.cu ./include/rh_impls.cu)
+target_link_libraries(hammer_lib PUBLIC Threads::Threads)
+
 # Reverse Engineering
-add_library(re_lib ./re_gddr/drama_conflict_prober.cu ./include/utils.cu)
+add_library(re_lib ./re_gddr/drama_conflict_prober.cu)
+target_link_libraries(re_lib PUBLIC hammer_lib)
 
 # Get Conflict Set
 add_executable(conf_set ./re_gddr/conf_set_main.cu)
@@ -31,8 +36,8 @@ add_executable(row_set ./re_gddr/row_set_main.cu)
 target_link_libraries(row_set PUBLIC re_lib)
 
 # Get Bank Set
-add_executable(get_banks ./re_gddr/get_banks_main.cu)
-target_link_libraries(get_banks PUBLIC re_lib)
+add_executable(bank_set ./re_gddr/bank_set_main.cu)
+target_link_libraries(bank_set PUBLIC re_lib)
 
 # Get Timing values
 add_executable(gen_time ./re_gddr/gen_time_main.cu)
@@ -44,10 +49,6 @@ target_link_libraries(gen_time_same PUBLIC re_lib)
 
 add_executable(load_modifiers ./re_gddr/load_modifiers_main.cu)
 target_link_libraries(load_modifiers PUBLIC re_lib)
-
-# Hammer
-add_library(hammer_lib ./include/cuda_helpers.cu ./include/hammer_util.cu ./include/hammer_kernels.cu ./include/utils.cu)
-target_link_libraries(hammer_lib PUBLIC Threads::Threads)
 
 ## Simple hammer
 add_executable(simple_hammer ./hammer/simple_hammer.cu )

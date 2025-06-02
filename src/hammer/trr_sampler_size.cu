@@ -1,7 +1,7 @@
-#include <hammer_util.cuh>
 #include <atomic>
 #include <chrono>
-#include <hammer_kernels.cuh>
+#include <rh_impls.cuh>
+#include <rh_utils.cuh>
 #include <fstream>
 #include <iostream>
 #include <pthread.h>

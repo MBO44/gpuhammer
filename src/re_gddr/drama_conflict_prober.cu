@@ -1,5 +1,5 @@
 #include "drama_conflict_prober.cuh"
-#include <utils.cuh>
+#include <rh_utils.cuh>
 #include <algorithm>
 #include <iostream>
 namespace re_gddr

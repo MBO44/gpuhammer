@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
+std::string CLI_PREFIX = "(bank-set): ";
+
 /* Idea:
      - Iterate through each address
      - for each address, find an address that conflict (same bank)

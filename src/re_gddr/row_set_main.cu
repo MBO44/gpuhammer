@@ -3,6 +3,8 @@
 #include <map>
 #include <vector>
 
+std::string CLI_PREFIX = "(row-set): ";
+
 /* Key is the first ever address in row, Value is the row including key */
 using Conf_Map = std::map<uint64_t, std::vector<uint64_t>>;
 

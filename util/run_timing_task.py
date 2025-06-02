@@ -251,7 +251,7 @@ if __name__ == "__main__":
             p.wait()
         case "bank_set":
             p = subprocess.Popen(
-                f"{HAMMER_ROOT}/src/out/build/get_banks {args.size} {args.it} {args.step} {args.threshold} {args.max} {args.outputFile}",
+                f"{HAMMER_ROOT}/src/out/build/bank_set {args.size} {args.it} {args.step} {args.threshold} {args.max} {args.outputFile}",
                 shell=True,
             )
             p.wait()

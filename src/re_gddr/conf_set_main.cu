@@ -1,6 +1,8 @@
 #include "drama_conflict_prober.cuh"
 #include <iostream>
 
+std::string CLI_PREFIX = "(conf-set): ";
+
 int
 main (int argc, char *argv[])
 {

@@ -1,5 +1,5 @@
-#include <hammer_util.cuh>
 #include <stdint.h>
+#include <rh_utils.cuh>
 
 #ifndef GPU_ROWHAMMER_HAMMER_KERNELS_CUH
 #define GPU_ROWHAMMER_HAMMER_KERNELS_CUH

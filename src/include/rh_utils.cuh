@@ -8,6 +8,16 @@
 #ifndef GPU_ROWHAMMER_HAMMER_UTIL_CUH
 #define GPU_ROWHAMMER_HAMMER_UTIL_CUH
 
+#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
+{
+   if (code != cudaSuccess) 
+   {
+      fprintf(stderr,"GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
+      if (abort) exit(code);
+   }
+}
+
 using RowList = std::vector<std::vector<uint8_t *>>;
 using Row = std::vector<uint8_t *>;
 
@@ -59,5 +69,20 @@ void evict_L2cache(uint8_t *layout);
 void print_time (uint64_t time_ns);
 
 void initialize_rows(RowList &rows, uint64_t b_count);
+
+uint64_t toNS(uint64_t time);
+
+std::tuple<int, int> get_dim_from_size(uint64_t size);
+
+/* Returns vector in string form, thats it. */
+template <typename T> std::string vector_str(const std::vector<T> &vec)
+{
+  std::ostringstream oss;
+  oss << '[';
+  std::copy(vec.begin(), vec.end(), std::ostream_iterator<T>(oss, ", "));
+  oss << ']';
+  return oss.str();
+}
+
 
 #endif /* GPU_ROWHAMMER_HAMMER_UTIL_CUH */

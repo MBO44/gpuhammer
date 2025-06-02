@@ -1,4 +1,4 @@
-#include <cuda_helpers.cuh>
+#include <rh_kernels.cuh>
 #include <iostream>
 
 /**
@@ -99,7 +99,7 @@ __global__ void simple_hammer_kernel(uint8_t **addr_arr, uint64_t count,
   *time = ce - cs;
 }
 
-__global__ void single_thread_hammer(uint8_t **addr_arr, uint64_t count, uint64_t n, uint64_t *time)
+__global__ void single_thread_hammer_kernel(uint8_t **addr_arr, uint64_t count, uint64_t n, uint64_t *time)
 {
   uint64_t temp __attribute__((unused));
   uint64_t ce, cs;

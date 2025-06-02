@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 
+std::string CLI_PREFIX = "(load-modifiers): ";
+
 int
 main (int argc, char *argv[])
 {

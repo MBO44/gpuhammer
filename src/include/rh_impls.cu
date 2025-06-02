@@ -1,6 +1,6 @@
-#include <cuda_helpers.cuh>
-#include <hammer_kernels.cuh>
-#include <utils.cuh>
+#include <rh_kernels.cuh>
+#include <rh_impls.cuh>
+#include <rh_utils.cuh>
 #include <memory>
 #include <algorithm>
 
@@ -48,7 +48,7 @@ uint64_t start_single_thread_hammer(RowList &rows, std::vector<uint64_t> &agg_ve
   std::cout << CLI_PREFIX << "Iterating: " << it << " times\n";
   std::cout << CLI_PREFIX << "Delay: " << delay << "\n";
 
-  single_thread_hammer<<<1, 1>>>(agg_device_arr, it, len, timeSpentDevice);
+  single_thread_hammer_kernel<<<1, 1>>>(agg_device_arr, it, len, timeSpentDevice);
   cudaDeviceSynchronize();
 
   cudaMemcpy(&timeSpentHost, timeSpentDevice, sizeof(uint64_t *),
@@ -95,7 +95,7 @@ uint64_t start_warp_simple_hammer(RowList &rows, std::vector<uint64_t> &agg_vec,
   std::cout << CLI_PREFIX << "Delay: " << delay << "\n";
 
   warp_simple_hammer_kernel<<<1, 1024>>>(agg_device_arr, it, n, k, len, delay, period, timeSpentDevice);
-  // single_thread_hammer<<<1, 1>>>(agg_device_arr, it, n, delay, timeSpentDevice);
+
   cudaDeviceSynchronize();
 
   cudaMemcpy(&timeSpentHost, timeSpentDevice, sizeof(uint64_t *),
