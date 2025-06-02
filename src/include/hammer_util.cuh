@@ -56,16 +56,6 @@ void sleep_for(uint64_t time, char time_type);
 
 void evict_L2cache(uint8_t *layout);
 
-/* Returns vector in string form, thats it. */
-template <typename T> std::string vector_str(const std::vector<T> &vec)
-{
-  std::ostringstream oss;
-  oss << '[';
-  std::copy(vec.begin(), vec.end(), std::ostream_iterator<T>(oss, ", "));
-  oss << ']';
-  return oss.str();
-}
-
 void print_time (uint64_t time_ns);
 
 void initialize_rows(RowList &rows, uint64_t b_count);

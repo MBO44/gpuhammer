@@ -1,5 +1,6 @@
 #include "cuda_helpers.cuh"
 #include "hammer_util.cuh"
+#include <utils.cuh>
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -11,16 +12,6 @@
 #include <sstream>
 #include <thread>
 #include <iostream>
-
-#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
-inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
-{
-   if (code != cudaSuccess) 
-   {
-      fprintf(stderr,"GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
-      if (abort) exit(code);
-   }
-}
 
 static void set_row(Row &row, uint8_t pat, uint64_t b_count);
 static void clear_L2cache_row(Row &row, uint64_t step);
@@ -310,7 +301,6 @@ void evict_L2cache(uint8_t *layout)
 {
   struct cudaDeviceProp device_prop;
   cudaGetDeviceProperties(&device_prop, 0);
-  // std::cerr << "L2 Cache Size: " << device_prop.l2CacheSize << std::endl;
 
   uint64_t size = device_prop.l2CacheSize * 8;
   static uint64_t maxThreads = []()
@@ -321,20 +311,6 @@ void evict_L2cache(uint8_t *layout)
   }();
   
   evict_kernel<<<1, maxThreads>>>(layout, size / maxThreads);
-  // ////
-  // for (int i = 0; i <= device_prop.l2CacheSize * 8; i += 128)
-  //   normal_address_access<<<1, 1>>>(layout + i, 0);
-
-  // ////
-  // uint64_t size = device_prop.l2CacheSize * 36 / 128;
-  // std::cout << "l2cachesize: " << device_prop.l2CacheSize << '\n';
-
-  // static int numBlock = std::get<0>(get_dim_from_size(size));
-  // static int numThreads = std::get<1>(get_dim_from_size(size));
-  // std::cout << "Block: " << numBlock << " Threads: " << numThreads << '\n';
-
-  // normal_address_access<<<numBlock, numThreads>>>(layout, 128);
-  // gpuErrchk(cudaPeekAtLastError());
 }
 
 void print_time(uint64_t time_ns)

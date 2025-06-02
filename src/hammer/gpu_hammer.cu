@@ -1,7 +1,6 @@
 #include <hammer_util.cuh>
 #include <atomic>
 #include <chrono>
-#include <cuda_helpers.cuh>
 #include <hammer_kernels.cuh>
 #include <fstream>
 #include <iostream>

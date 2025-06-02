@@ -1,5 +1,6 @@
 #include <cuda_helpers.cuh>
 #include <hammer_kernels.cuh>
+#include <utils.cuh>
 #include <memory>
 #include <algorithm>
 
