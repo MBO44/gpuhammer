@@ -45,24 +45,20 @@ sudo reboot
  Our profiling is easier with the persistence mode enabled, and with fixed GPU and memory clock rates, although these are not pre-requisites. The following script performs the above actions:
 ```bash
 # Example usage: 
-#   bash ./util/init_cuda.sh 1800 7600
-bash ./util/init_cuda.sh <MAX_GPU_CLOCK> <MAX_MEMORY_CLOCK>
+#  bash ./util/init_cuda.sh <MAX_GPU_CLOCK> <MAX_MEMORY_CLOCK>
+bash ./util/init_cuda.sh 1800 7600
 ```
+**MAX_GPU_CLOCK** and **MAX_MEMORY_CLOCK** can be found with `deviceQuery` from CUDA samples. We provide this for A6000 in 'deviceQuery.txt'. 
 
-**MAX_GPU_CLOCK** and **MAX_MEMORY_CLOCK** are found with `deviceQuery` from CUDA samples, which we provide a sample for A6000 in 'deviceQuery.txt'. 
-
-To undo the changes, run:
-```bash
-bash ./util/reset_cuda.sh
-```
+These changes can be undone with `bash ./util/reset_cuda.sh`.
 
 ### 3. Run the Artifact
 Run the following commands to install dependencies, build GPUHammer, and execute experiments.
 
 ```bash
-  cd gpuhammer # Ensure you are in the respository root
-  export HAMMER_ROOT=`pwd`
-  bash ./run_artifact.sh
+cd gpuhammer # Ensure you are in the respository root
+export HAMMER_ROOT=`pwd`
+bash ./run_artifact.sh
 ```
 
 ### 4. Generate Figures
@@ -74,14 +70,16 @@ bash ./plot_all_figures.sh
 
 ## Detailed Steps for Artifacts
 
-### Prerequisites
+The `run_artifact.sh` above installs the prerequisite dependencies, builds GPUHammer and executes experiments. We detail out the steps below, in case any of them need to be run manually.
+
+### Installing Prerequisites
 Install RAPIDS RMM and Python dependencies.
 
 ```bash
 bash ./run_setup.sh
 ```
 
-If error occurs during setup, run the following to clean up left-over artifacts.
+If an error occurs during setup, run the following to clean up.
 
 ```bash
 bash ./run_setup.sh clean
