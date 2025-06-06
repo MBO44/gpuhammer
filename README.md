@@ -92,7 +92,7 @@ This command will run the following steps:
 
 If a run script is supposed to generate a figure (Figures 2, 5, 6, 8, 10, 11, 12), it is stored in the respective folders: `./results/fig*` . 
 
-The results of the campaign `run_t1_t3.sh ` are stored in `./results/campaign` and the respective tables (Table 1 and Table 3) are in `./results/campaign/t1.txt` and `./results/campaign/t3.txt`. 
+The results of the campaign `run_t1_t3.sh` are stored in `./results/campaign` and the respective tables (Table 1 and Table 3) are in `./results/campaign/t1.txt` and `./results/campaign/t3.txt`. 
 
 The results of the exploit (Figure 13 and Table 4) are in `./results/fig13_t4/fig13.pdf` and`./results/fig13_t4/t4.txt`
 
@@ -249,13 +249,13 @@ On the output plot, observe that there is a flat-lined area in the middle. This 
 
 ### Step 3: Profile for Bit-flips
 
-The helper script `run_hammer.sh` is available in the `util` folder. Again, we assume the row set files and log files exist, so please update the relevant variables. In addition, fill in the `delay` configuration you obtained from the previous step. You can run the script with
+The helper script `run_campaign.py` is available in the `util` folder. Again, we assume the row set files exist, so please update the relevant variables. In addition, fill in the `delay` configuration you obtained from the previous step in `results/delay/delays.txt` by adding a line in the form `<bank_id>, <number of aggressors>, <delay_amount>`. You can run the script with the code below to start a campaign on four banks (A, B, C, D) with 24-sided hammering.
 
 ```bash
-bash ./util/run_hammer.sh
+python3 run_campaign.py --bank_ids A B C D --num_agg 24
 ```
 
-The result of your hammering can be found at `./results/campaign/bank_<offset>/<#_of_aggressors>agg_<vic_pat><agg_pat>_log.txt`. Any bitflips will be reported in the form `Observed Bit-Flip ...` in the log file. 
+The result of your hammering can be found at `./results/campaign/bank_<offset>/<#_of_aggressors>agg_<vic_pat><agg_pat>_log.txt`. Any bitflips will be reported in the form `Bit-flip detected!` in the log file. 
 
 ### Campaign Configurations
 
@@ -268,7 +268,7 @@ In our systematic study, we ran attacks with `num_agg = 8, 12, 16, 20, 24` and `
 
 For our artifact evaluation, our scripts only perform hammering with 24-sided due to time limitations. But the script can be modified run campaigns for other configurations as well.
 
-Each hammer takes approximately 600 ms to run if we treat the entire bank as victim rows. Alternatively, to speed up the hammers, you can comment and uncomment some code according to line 110 & 111 of `./src/hammer/gpu_hammer.cu`. This verifies only the rows in the neighborhood of the hammered aggressors for bitflips, reducing the time for a hammer kernel to around 200 ms. With this setup, it takes approximately 5 hours to complete a sweep on one bank with a single `num_agg` configuration for both data patterns.
+<!-- Each hammer takes approximately 400 ms to run if we treat the entire bank as victim rows. Alternatively, to speed up the hammers, you can comment and uncomment some code according to line 110 & 111 of `./src/hammer/gpu_hammer.cu`. This verifies only the rows in the neighborhood of the hammered aggressors for bitflips, reducing the time for a hammer kernel to around 200 ms. With this setup, it takes approximately 5 hours to complete a sweep on one bank with a single `num_agg` configuration for both data patterns. -->
 
 #### Existing Bitflips
 
@@ -277,8 +277,6 @@ Reproducing bitflips from our A6000 can be done with `./util/run_known_flips.sh`
 ```bash
 bash ./util/run_known_flips.sh
 ```
-
-
 
 ### Step 4: Perform Time Sliced Exploit
 

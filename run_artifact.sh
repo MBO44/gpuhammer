@@ -40,6 +40,7 @@ bash run_fig2.sh $flag_reuse
 bash run_fig5_6.sh $flag_reuse
 bash run_fig8.sh $flag_reuse
 bash run_fig10.sh $flag_reuse
+bash run_t1_t3.sh
 bash run_fig11.sh
 bash run_fig12.sh
 bash run_fig13_t4.sh $flag_reuse

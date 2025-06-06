@@ -39,11 +39,9 @@ for bank_id in args.banks:
 
                 with open(full_path, "r") as f:
                     log_data = f.read()
-                    print(log_data[100:200])  # Print first 100 characters for debugging
 
                 for match in bitflip_pattern.finditer(log_data):
                     row, byte, addr, bit, from_bit, to_bit, original, observed = match.groups()
-                    # print(f"Found bitflip in bank {bank_id}, row {row}, byte {byte}, address {addr}: {from_bit} -> {to_bit} (original: {original}, observed: {observed})")
                     key = (bank_id, int(row), num_aggs)
                     if key not in seen:
                         seen.add(key)
