@@ -3,11 +3,9 @@
 ## Introduction
 
 This is the code artifact for the paper 
-**"CGPUHammer: Rowhammer Attacks on GPU Memories are Practical"**, presented at [USENIX Security 2025](https://www.usenix.org/conference/usenixsecurity25)
+**"GPUHammer: Rowhammer Attacks on GPU Memories are Practical"**, presented at [USENIX Security 2025](https://www.usenix.org/conference/usenixsecurity25)
 
-Authors: Chris S. Lin (University of Toronto), Joyce Qu (University of Toront), Gururaj Saileshwar (University of Toronto).
-
-You can reproduce our security and performance evaluations as follows.
+Authors: Chris S. Lin (University of Toronto), Joyce Qu (University of Toronto), Gururaj Saileshwar (University of Toronto).
 
 ## Required Environment
 **Run-time Environment:**  We suggest using a Linux distribution compatible with g++-11 or newer. We tested our artifacts on Ubuntu 20.04.
@@ -22,12 +20,11 @@ You can reproduce our security and performance evaluations as follows.
 
 - Hardware Dependencies:
    - NVIDIA GPU sm_80+
-   - GDDR6 SDRAM
 
 ## Affected GPUs
 - NVIDIA A6000 GPU with 48GB GDDR6
 
-## Steps for Artifact Generation
+## Steps for Artifact Evaluation
 
 ### 1. Clone the Repository
 Ensure you have already cloned the repository:
@@ -37,7 +34,7 @@ cd gpuhammer
 ```
 
 ## 2. GPU Setup
-For the Rowhammer attack, a prerequiste is **disabling ECC**, if that is not already done by default on the GPU. If it is enabled, use the following commands to disable:
+For the Rowhammer attack, a prerequiste is having **ECC disabled**. This is already the default setting on many GPUs. But if it is enabled, use the following commands to disable it:
 ```bash
 sudo nvidia-smi -e 0
 rmmod nvidia_drm 
@@ -45,27 +42,23 @@ rmmod nvidia_modeset
 sudo reboot
 ```
 
- Additionally, our profiling is easier with the persistence mode enabled, and with fixed GPU and memory clock rates, although these are not pre-requisites. The following script performs the above actions:
+ Our profiling is easier with the persistence mode enabled, and with fixed GPU and memory clock rates, although these are not pre-requisites. The following script performs the above actions:
 ```bash
 # Example usage: 
-#   bash ./util/init_cuda.sh 1800 7600
-bash ./util/init_cuda.sh <MAX_GPU_CLOCK> <MAX_MEMORY_CLOCK>
+#  bash ./util/init_cuda.sh <MAX_GPU_CLOCK> <MAX_MEMORY_CLOCK>
+bash ./util/init_cuda.sh 1800 7600
 ```
+**MAX_GPU_CLOCK** and **MAX_MEMORY_CLOCK** can be found with `deviceQuery` from CUDA samples. We provide this for A6000 in 'deviceQuery.txt'. 
 
-**MAX_GPU_CLOCK** and **MAX_MEMORY_CLOCK** are found with `deviceQuery` from CUDA samples, which we provide a sample for A6000 in 'deviceQuery.txt'. 
-
-To undo the changes, run:
-```bash
-bash ./util/reset_cuda.sh
-```
+These changes can be undone with `bash ./util/reset_cuda.sh`.
 
 ### 3. Run the Artifact
 Run the following commands to install dependencies, build GPUHammer, and execute experiments.
 
 ```bash
-  cd gpuhammer # Ensure you are in the respository root
-  export HAMMER_ROOT=`pwd`
-  bash ./run_artifact.sh
+cd gpuhammer # Ensure you are in the respository root
+export HAMMER_ROOT=`pwd`
+bash ./run_artifact.sh
 ```
 
 ### 4. Generate Figures
@@ -77,14 +70,16 @@ bash ./plot_all_figures.sh
 
 ## Detailed Steps for Artifacts
 
-### Prerequisites
+The `run_artifact.sh` above installs the prerequisite dependencies, builds GPUHammer and executes experiments. We detail out the steps below, in case any of them need to be run manually.
+
+### Installing Prerequisites
 Install RAPIDS RMM and Python dependencies.
 
 ```bash
 bash ./run_setup.sh
 ```
 
-If error occurs during setup, run the following to clean up left-over artifacts.
+If an error occurs during setup, run the following to clean up.
 
 ```bash
 bash ./run_setup.sh clean
