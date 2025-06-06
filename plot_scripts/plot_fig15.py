@@ -1,100 +1,66 @@
 import matplotlib.pyplot as plt
-import sys, os
-from matplotlib.ticker import FuncFormatter
 import numpy as np
+import sys, os
+import math
+from matplotlib.widgets import Cursor
 
-# Function to read the file and return y-values and corresponding x-values
-def average_from_file(filename) -> float:
-    try:
-        with open(filename, 'r') as file:
-            numbers = [int(line.strip()) for line in file]
-        return sum(numbers) / len(numbers) if numbers else 0
-    except FileNotFoundError:
-        return 0
+HAMMER_ROOT = os.environ['HAMMER_ROOT']
+row_set_file = open(f"{HAMMER_ROOT}/results/row_sets/ROW_SET_0.txt")
+cmap = plt.get_cmap("tab10")
+markers = ['^', "P", "d", "*"]
 
-def to_repeated_hex_lower(idx):
-    hex_str = hex(idx)[2:].lower()
-    return ''.join([ch*2 for ch in hex_str])
 
-def to_repeated_hex_upper(idx):
-    hex_str = hex(idx)[2:].upper()
-    return ''.join([ch*2 for ch in hex_str])
+def plot_distance_cursor(i, distance):
+    top = i + 0.9
+    bot = i + 0.1
+    plt.plot([8, 12], [bot, bot], 'k-', lw=2)
+    plt.plot([10, 10], [bot, top], 'k-', lw=2)
+    plt.plot([8, 12], [top, top], 'k-', lw=2)
+    plt.text(12, i + 0.5, str(distance * 256) + " Bytes", fontsize=16, va='center', ha='left', weight='bold', c="black")
 
-def percentage_formatter(x, pos):
-    return f'{x:.0f}%'
+row_count = 4
+row_pos = [[] for _ in range(4)]
+row_offset = []
+for i in range (row_count):
+    row = row_set_file.readline().strip().split('\t')
+    offset = int(row[0])
+    pos = 0
+    row_offset.append(offset // 256)
+    row_pos[i].append(pos)
+    row.pop(0)
+    while len(row) != 0:
+        while offset != int(row[0]):
+            offset += 256
+            pos += 1
+        row_pos[i].append(pos)
+        row.pop(0)
 
-def plot_heatmap(data):
-    # Sort columns by sum
-    column_sums = np.sum(data, axis=0)
-    sorted_column_indices = np.argsort(column_sums, stable=True)[::-1]
-    data_sorted_columns = data[:, sorted_column_indices]
-    
-    # Identify and remove columns with all zero entries
-    nonzero_column_mask = np.any(data_sorted_columns != 0, axis=0)
-    data_sorted_columns = data_sorted_columns[:, nonzero_column_mask]
-    sorted_column_indices = sorted_column_indices[nonzero_column_mask]
-    
-    # Sort rows by sum of the sorted columns
-    row_sums = np.sum(data_sorted_columns, axis=1)
-    sorted_row_indices = np.argsort(row_sums)[::-1]
-    data_sorted_rows = data_sorted_columns[sorted_row_indices, :]
-    
-    # Identify and remove rows with all zero entries
-    nonzero_row_mask = np.any(data_sorted_rows != 0, axis=1)
-    sorted_data = data_sorted_rows[nonzero_row_mask, :]
-    sorted_row_indices = sorted_row_indices[nonzero_row_mask]
+fig,ax = plt.subplots()
+fig.set_size_inches(10, 4)
+ax.tick_params(axis='both', which='major', labelsize=16, left=False)
+ax.tick_params(axis='both', which='minor', labelsize=16, left=False)
+for x_v in ax.spines.values():
+    x_v.set_alpha(0.5)
+    x_v.set_edgecolor('grey') 
+plt.grid(axis='y', color='grey', linestyle='-', alpha=0.5,zorder=0)
 
-    plt.imshow(sorted_data, cmap='hot_r', interpolation='nearest')
+for i in range (row_count):
+    plt.plot(row_pos[i], [i + 1 for _ in range(len(row_pos[i]))], linestyle=':', color=cmap(i), marker=markers[i], markersize=13, label=f"Row {i + 1}", linewidth=3)
+    if i < row_count - 1:
+        plot_distance_cursor(i + 1, row_offset[i + 1] - row_offset[i])
 
-    hex_column_labels = [to_repeated_hex_upper(idx) for idx in sorted_column_indices]
-    hex_row_labels = [to_repeated_hex_upper(idx) for idx in sorted_row_indices]
+# plt.ylabel('Time per Round (NS)', fontsize=22)
+# plt.yticks([i for i in range(1, row_count + 1)], [f"Row {i}" for i in range(1, row_count + 1)])
+plt.yticks([])
+plt.xlabel('Row Address Separation (256 Byte)', fontsize=22)
+plt.grid(True)
+handles, labels = ax.get_legend_handles_labels()
+plt.legend(
+    loc="upper center",
+    fontsize=16,
+    ncols=5,
+    bbox_to_anchor=(0.5, 1.24),
+    numpoints=1,
+    handlelength=0)
 
-    # Set x and y ticks and labels
-    plt.xticks(ticks=np.arange(len(sorted_column_indices)), labels=hex_column_labels)
-    plt.yticks(ticks=np.arange(len(sorted_row_indices)), labels=hex_row_labels)
-
-    plt.ylabel('Victim Data Pattern', fontsize=14)
-    plt.xlabel('Aggressor Data Pattern', fontsize=14)
-    
-    cbar = plt.colorbar()
-    cbar.set_label("% of hammers\ntriggering bit-flips", rotation=270, labelpad=25)
-    # Set the formatter for the colorbar
-    cbar.ax.yaxis.set_major_formatter(FuncFormatter(percentage_formatter))
-
-    plt.tight_layout()
-
-data_pat = ['00', '11', '22', '33', '44', '55', '66', '77', '88', '99', 'aa', 'bb', 'cc', 'dd', 'ee', 'ff']
-
-# Main execution
-if __name__ == "__main__":
-
-    num_agg = 24
-
-    # TODO: Update these lists into a dictionary
-    bank_lst = [256, 2048, 2048, 2048, 5120, 6400, 6400, 6400]
-    flip_lst = [30329, 3543, 13057, 23029, 4371, 13635, 21801, 28498]
-
-    i = int(sys.argv[1])
-    bank = bank_lst[i]
-    flip = flip_lst[i]
-
-    # Generate input and output directories
-    HAMMER_ROOT = os.environ['HAMMER_ROOT']
-    INPUT_DIR = os.path.join(HAMMER_ROOT, "results", "fig15", "raw_files")
-    OUTPUT_DIR = os.path.join(HAMMER_ROOT, "results", f"fig15_flip{i}")
-
-    data = np.zeros((16, 16))
-
-    for j in range(16):
-        for k in range(16):
-            vic_pat, agg_pat = to_repeated_hex_lower(j), to_repeated_hex_lower(k)
-            filename = os.path.join(INPUT_DIR, 
-                                    f"{num_agg}agg_b{bank}_count_flip{flip}_{vic_pat}{agg_pat}.txt")
-            data[j][k] = average_from_file(filename) / 50 * 100
-    
-    plt.figure(figsize=(7, 3))
-    plot_heatmap(data)
-
-    output_image = os.path.join(OUTPUT_DIR, f"fig15_flip{i}.pdf")
-    plt.savefig(output_image)
-    plt.close()
+fig.savefig(f"{HAMMER_ROOT}/results/fig15/fig15.pdf", transparent=True, format="pdf", bbox_inches="tight")

@@ -1,5 +1,4 @@
 #include <rh_kernels.cuh>
-#include <iostream>
 
 /**
  * @brief Sets the address byte identified by the thread offset to value.
@@ -45,7 +44,7 @@ __global__ void clear_address_kernel(uint8_t *addr, uint64_t step)
  * @return @param has_diff return value for host to know whether a difference occured
  */
 __global__ void verify_result_kernel(uint8_t **addr_arr, uint64_t target,
-  uint64_t b_len, bool *has_diff)
+  uint64_t b_len, bool *has_diff, int *row_ids)
 {
   uint64_t value;
 
@@ -57,16 +56,22 @@ __global__ void verify_result_kernel(uint8_t **addr_arr, uint64_t target,
                 : "=l"(value)
                 : "l"(*(addr_arr + addr_id) + byte_id));
 
-  int diff_count = 0;
   int diff = target ^ value; // XOR
-  for (int i = 0; i < 8; i++)
-    diff_count += (diff >> i) & 1;
 
-  if (diff_count)
+  if (diff != 0)
   {
     if (has_diff) *has_diff = true;
-    printf("Bit-Flip Location: %d bit at %p\n", diff_count, *(addr_arr + addr_id) + byte_id);
-    printf("Expected Pattern: %02lx, Observed Pattern: %02lx\n", target, value);
+    int diff_count = __popcll(diff);
+    int bit_pos = __ffsll(diff) - 1;
+    int from_bit = (target >> bit_pos) & 1;
+    int to_bit   = (value  >> bit_pos) & 1;
+    
+    printf("\nBit-flip detected!\n");
+    printf("Observed %d bit-flip(s) in Row %d, Byte %d, Address %p\n",
+           diff_count, row_ids[addr_id], byte_id, 
+           *(addr_arr + addr_id) + byte_id);
+    printf("The %dth bit flipped from %d to %d (Data Pattern: 0x%02lx -> 0x%02lx)\n\n", bit_pos, from_bit, to_bit, target, value);
+
   }
 }
 

@@ -8,19 +8,18 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-echo "---------------------------"
+echo "-------------------------------------------"
 echo ""
-echo "#####################"
+echo "###########################################"
 echo "[INFO] 1. Setup Anaconda and Dependencies"
-echo "#####################"
-
+echo "###########################################"
 bash run_setup.sh
 
-echo "---------------------------"
+echo "-------------------------------------------"
 echo ""
-echo "#####################"
+echo "###########################################"
 echo "[INFO] 2. Building GPUHammer"
-echo "#####################"
+echo "###########################################"
 
 conda init
 source activate base
@@ -30,11 +29,11 @@ cd $HAMMER_ROOT/src/out/build
 make
 cd $HAMMER_ROOT
 
-echo "---------------------------"
+echo "-------------------------------------------"
 echo ""
-echo "#####################"
+echo "###########################################"
 echo "[INFO] 3. Running Artifacts"
-echo "#####################"
+echo "###########################################"
 
 bash run_row_sets.sh $flag_reuse
 bash run_fig2.sh $flag_reuse
@@ -42,6 +41,7 @@ bash run_fig5_6.sh $flag_reuse
 bash run_fig8.sh $flag_reuse
 bash run_fig10.sh $flag_reuse
 bash run_fig11.sh
-bash run_fig12_t4.sh $flag_reuse
-bash run_fig14.sh
+bash run_fig12.sh
+bash run_fig13_t4.sh $flag_reuse
 bash run_fig15.sh
+bash run_fig16.sh

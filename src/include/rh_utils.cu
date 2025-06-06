@@ -126,13 +126,20 @@ bool verify_all_content(RowList &rows, std::vector<uint64_t> &victims,
                         std::vector<uint64_t> &aggressors, 
                         const uint64_t b_count, const uint8_t pat)
 {
+  int batchSize = 64;
+
   bool *diff_device;
   bool diff;
-  uint8_t **addrs_device;
-  int batchSize = 64;
   cudaMalloc(&diff_device, sizeof(bool *));
   cudaMemset(diff_device, 0, sizeof(bool *));
+
+  uint8_t **addrs_device;
   cudaMalloc(&addrs_device, sizeof(uint8_t *) * 8 * batchSize);
+
+  // Store and pass row IDs to the kernel to be printed.
+  int *row_ids_device;
+  int row_ids_host[8 * batchSize];
+  cudaMalloc(&row_ids_device, sizeof(int) * 8 * batchSize);
 
   for (int i = 0; i < victims.size(); i += batchSize)
   {
@@ -144,14 +151,22 @@ bool verify_all_content(RowList &rows, std::vector<uint64_t> &victims,
 
       int size = rows[v].size() <= 8 ? rows[v].size() : 8;
       cudaMemcpy(addrs_device + amount, rows[v].data(), size * sizeof(uint8_t *), cudaMemcpyHostToDevice);
+      for (int k = 0; k < size; ++k)
+        row_ids_host[amount + k] = v;
       amount += size;
     }
-    if (amount != 0)
-      verify_result_kernel<<<amount, 256>>>(addrs_device, pat, b_count, diff_device);
+    
+    cudaMemcpy(row_ids_device, row_ids_host, sizeof(int) * amount, cudaMemcpyHostToDevice);
+
+    verify_result_kernel<<<amount, 256>>>(addrs_device, pat, b_count, diff_device, row_ids_device);
   }
+
   cudaDeviceSynchronize();
   cudaMemcpy(&diff, diff_device, sizeof(bool *), cudaMemcpyDeviceToHost);
   cudaFree(diff_device);
+  cudaFree(row_ids_device);
+  cudaFree(addrs_device);
+
   return diff;
 }
 

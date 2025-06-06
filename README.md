@@ -146,22 +146,28 @@ bash run_fig10.sh
 bash run_fig11.sh
 ```
 
-#### Figure 12 & Table 4
+#### Figure 12
 
 ```bash
-bash run_fig12_t4.sh
+bash run_fig12.sh
 ```
 
-#### Figure 14
+#### Figure 13 & Table 4
 
 ```bash
-bash run_fig14.sh
+bash run_fig13_t4.sh
 ```
 
 #### Figure 15
 
 ```bash
 bash run_fig15.sh
+```
+
+#### Figure 16
+
+```bash
+bash run_fig16.sh
 ```
 
 ### Generate Plots
@@ -213,22 +219,28 @@ python3 plot_fig11.py
 python3 plot_fig12.py
 ```
 
+#### Figure 13:
+
+```bash
+python3 plot_fig13.py
+```
+
 #### Table 4:
 
 ```bash
 bash plot_t4.sh
 ```
 
-#### Figure 14:
-
-```bash
-python3 plot_fig14.py
-```
-
 #### Figure 15:
 
 ```bash
 python3 plot_fig15.py
+```
+
+#### Figure 16:
+
+```bash
+python3 plot_fig16.py
 ```
 ## Detailed Steps to Run Rowhammer Campagin & Exploit
 

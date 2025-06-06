@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <vector>
+#include <iostream>
+#include <cuda_runtime.h>
 #ifndef GPU_ROWHAMMER_RH_KERNELS_CUH
 #define GPU_ROWHAMMER_RH_KERNELS_CUH
 
@@ -13,7 +15,7 @@ __global__ void clear_address_kernel(uint8_t *addr, uint64_t step);
 __global__ void evict_kernel(uint8_t *addr, uint64_t size);
 
 __global__ void verify_result_kernel(uint8_t **addr_arr, uint64_t target,
-  uint64_t b_len, bool *has_diff);
+  uint64_t b_len, bool *has_diff, int *row_ids);
 
 __global__ void simple_hammer_kernel(uint8_t **addr_arr, uint64_t count, uint64_t* time);
 

@@ -10,7 +10,7 @@ num_thread=3        # Number of threads per warp
 round=1             # No. of round per tREFI, each round hammers <num_agg> rows
 
 min_delay=0         # Minimum delay to test
-max_delay=200       # Maximum delay to test
+max_delay=100       # Maximum delay to test
 
 num_rows=64169      # Number of rows in the row_set (line number - 1)
 rowid=100           # Id of a row to test the delays, can be arbitrary

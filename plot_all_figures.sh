@@ -28,10 +28,13 @@ bash plot_t4.sh
 echo "[INFO] Generating Figure 12"
 python3 plot_fig12.py
 
-echo "[INFO] Generating Figure 14"
-python3 plot_fig14.py
+echo "[INFO] Generating Figure 13"
+python3 plot_fig13.py
 
 echo "[INFO] Generating Figure 15"
 python3 plot_fig15.py
+
+echo "[INFO] Generating Figure 16"
+python3 plot_fig16.py
 
 cd ../

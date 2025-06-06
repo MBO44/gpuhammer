@@ -1,44 +1,71 @@
+import os
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-import sys, os
-
-# Report the percentage of bit-flips triggered as recorded in the file.
-def average_from_file(filename) -> float:
-    with open(filename, 'r') as file:
-        numbers = [int(line.strip()) for line in file]
-    return sum(numbers) / len(numbers) if numbers else 0
+from matplotlib.ticker import FuncFormatter
 
 
-def plot_histogram(x, y):
-    plt.bar(x, y, edgecolor='black')
+# Report the average of numbers from a file
+def average_from_file(filename: str) -> float:
+    if os.path.exists(filename):
+        with open(filename, 'r') as file:
+            numbers = [int(line.strip()) for line in file]
+        return sum(numbers) / len(numbers) if numbers else 0
+    else:
+        return 0
+
+
+def find_min_ratio(input_dir: str) -> float:
+    min_ratio = 1
+
+    for agg in range(110):
+        for dum in range(100):
+            filename = os.path.join(input_dir, f'agg{agg}_dum{dum}_bitflip.txt')
+            if average_from_file(filename) > 0:
+                ratio = agg / (agg + dum)
+                if ratio < min_ratio:
+                    min_ratio = ratio
+
+    return min_ratio
+
+
+def plot_trh(flip_names, trh, plt=plt):
+    sorted_pairs = sorted(zip(flip_names, trh), key=lambda x: x[1])
+    sorted_flip_names, sorted_trh = zip(*sorted_pairs)
+
+    fig, ax = plt.subplots(figsize=(5.7, 2))
+    bars = ax.bar(sorted_flip_names, sorted_trh)
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _: f'{x}K'))
+    ax.set_xlabel('Bit-flips', fontsize=14)
+    ax.set_ylabel('Rowhammer\nThreshold', fontsize=14)
+    ax.set_ylim(top=20)
     
-    plt.xlabel('n-Sided Aggressor Pattern', fontsize=14)
-    plt.ylabel('% of hammers\ntriggering bit-flips', fontsize=14)
-    
-    plt.xticks(ticks=x, labels=[str(i) for i in x])
-    plt.grid(axis='y', linestyle='-', alpha=0.7)
-    plt.tight_layout()
+    # Label the bars with their values
+    for bar in bars:
+        height = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2, height,
+                f'{height:.1f}K', ha='center', va='bottom', fontsize=9)
 
 
 if __name__ == "__main__":
 
-    # Generate input and output directories
+    flip_names = ['A1', 'B1', 'B2', 'B3', 'C1', 'D1', 'D2', 'D3']
+    trh = [0.0] * len(flip_names)
+
     HAMMER_ROOT = os.environ['HAMMER_ROOT']
-    INPUT_DIR = os.path.join(HAMMER_ROOT, "results", "fig11", "raw_files")
     OUTPUT_DIR = os.path.join(HAMMER_ROOT, "results", "fig11")
+
+    act_per_trefi = 16.375       # 16.375K activations per tREFI
+
+    for i in range(len(flip_names)):
+        INPUT_DIR = os.path.join(HAMMER_ROOT, "results", "fig11", str(i))
+
+        min_ratio = find_min_ratio(INPUT_DIR)
+        trh[i] = min_ratio * act_per_trefi
+
+        print(f"TRH for {flip_names[i]}: {min_ratio * act_per_trefi:.4f} K")
+
+    # Plot and save the figure
+    plot_trh(flip_names, trh)
+    output_image = os.path.join(OUTPUT_DIR, f"fig11.pdf")
+    plt.tight_layout()
+    plt.savefig(output_image)
     
-    bank_no = 256
-    reps = 50
-
-    # Read the data from the files
-    x = list(range(8, 25))      # Test 8 to 24 sided patterns
-    y = [0] * 17
-    for num_agg in range(8, 25):
-        filename = os.path.join(INPUT_DIR, f"{num_agg}agg_b{bank_no}_count.txt")
-        y[num_agg - 8] = average_from_file(filename) / reps
-
-    # Plot
-    plt.figure(figsize=(6, 2.5))
-    plt.gca().yaxis.set_major_formatter(mticker.PercentFormatter(xmax=1, decimals=0))
-    plot_histogram(x, y)
-    plt.savefig(os.path.join(OUTPUT_DIR, "fig11.pdf"))
