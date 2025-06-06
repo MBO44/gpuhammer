@@ -5,7 +5,7 @@
 This is the code artifact for the paper 
 **"GPUHammer: Rowhammer Attacks on GPU Memories are Practical"**, presented at [USENIX Security 2025](https://www.usenix.org/conference/usenixsecurity25)
 
-Authors: Chris S. Lin (University of Toronto), Joyce Qu (University of Toront), Gururaj Saileshwar (University of Toronto).
+Authors: Chris S. Lin (University of Toronto), Joyce Qu (University of Toronto), Gururaj Saileshwar (University of Toronto).
 
 ## Required Environment
 **Run-time Environment:**  We suggest using a Linux distribution compatible with g++-11 or newer. We tested our artifacts on Ubuntu 20.04.
