@@ -80,9 +80,9 @@ bash ./run_artifact.sh
 
 This command will run the following steps:
 
-* [Install Prerequisites](#installing-prerequisites) (~15 mins)
+* [Install Prerequisites and Build](#detailed-instructions-for-building-the-artifact) (~15 mins)
 
-* [Run GPUHammer](#run-experiments) Experiments (~4 days)
+* Run GPUHammer Experiments (~4 days)
 
   ```bash
   # Generate Row Sets (takes ~1 day)
