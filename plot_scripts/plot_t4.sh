@@ -1,9 +1,9 @@
-output_file="$HAMMER_ROOT/results/fig12_t4/t4.csv"
+output_file="$HAMMER_ROOT/results/fig13_t4/t4.csv"
 
 echo "Bitflip,Model,Top1,Top5,RAD" > "$output_file"
 
 # Iterate over each folder
-cd $HAMMER_ROOT/results/fig12_t4/
+cd $HAMMER_ROOT/results/fig13_t4/
 for folder in D1 D3 B1 B2; do
     # Iterate over each file in the folder
     for file in "$folder"/*.txt; do
@@ -15,4 +15,4 @@ for folder in D1 D3 B1 B2; do
     done
 done
 
-column -s, -t < $output_file > t4_table.txt
+column -s, -t < $output_file > t4.txt

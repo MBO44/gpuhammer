@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ "$1" = "clean" ]; then
     echo "***********************************************************"
     echo "Erasing RMM Conda Environment"

@@ -53,20 +53,36 @@ bash ./util/init_cuda.sh 1800 7600
 
 These changes can be undone with `bash ./util/reset_cuda.sh`.
 
-### 3. Run the Artifact
+### 3. Download ImageNet Validation Dataset
+
+Head to the following URL to obtain access to the ImageNet 2012 Validation Dataset: https://www.image-net.org/download-images.php.
+
+We require the "Validation images (all tasks)" under Images when inside the ImageNet 2012 DataSet webpage. Please obtain the download link and download it **to the repository root** as follows:
+
+```bash
+# Make sure you are downloading the file into the repository root directory
+cd gpuhammer
+wget <download link>
+```
+
+The downloaded file's name should be `ILSVRC2012_img_val.tar`.
+
+### 4. Run the Artifact
 Run the following commands to install dependencies, build GPUHammer, and execute experiments.
 
 ```bash
-cd gpuhammer # Ensure you are in the respository root
+cd gpuhammer
+
+# Make sure you set HAMMER_ROOT to the repository root directory
 export HAMMER_ROOT=`pwd`
 bash ./run_artifact.sh
 ```
 
 This command will run the following steps:
 
-* [Install Prerequisites](#installing-prerequisites) (~15 mins)
+* [Install Prerequisites and Build](#detailed-instructions-for-building-the-artifact) (~15 mins)
 
-* [Run GPUHammer](#run-experiments) Experiments (~3 days)
+* Run GPUHammer Experiments (~4 days)
 
   ```bash
   # Generate Row Sets (takes ~1 day)
@@ -86,7 +102,7 @@ This command will run the following steps:
   bash run_fig11.sh
   bash run_fig12.sh
   
-  ## Exploit using 4 bit flips on 5 ML models (takes ~1 day)
+  ## Exploit using 4 bit flips on 5 ML models (takes ~1.5 day)
   bash run_fig13_t4.sh
   ```
 
@@ -280,7 +296,7 @@ bash ./util/run_known_flips.sh
 
 ### Step 4: Perform Time Sliced Exploit
 
-By default our scripts execute the exploits with the bit flips we already discovered. But one can modify this to use new bit flips discovered in the campaigns. Once you have found some **0->1** bit-flips that map to the Most Significant Bit in FP16 (i.e. bit location 6 in an the second byte) , you can run an exploit, targeting these bit-flips in a ML model weight. We provide sample exploit scripts, `run_hammer_manual_<bitflip>.sh` in `data_scripts/fig12_t4` that automates this process. 
+By default our scripts execute the exploits with the bit flips we already discovered. But one can modify this to use new bit flips discovered in the campaigns. Once you have found some **0->1** bit-flips that map to the Most Significant Bit in FP16 (i.e. bit location 6 in an the second byte) , you can run an exploit, targeting these bit-flips in a ML model weight. We provide sample exploit scripts, `run_hammer_manual_<bitflip>.sh` in `data_scripts/fig13_t4` that automates this process. 
 
 #### Finding the Proper Aggressor Row for Victim Row
 
@@ -308,7 +324,7 @@ To exploit given a left side aggressor, we can create a script based on either t
 - **store_dir:** Location to store your exploit results.
 
 ```bash
-bash ./data_scripts/fig12_t4/run_hammer_manual_<name>.sh
+bash ./data_scripts/fig13_t4/run_hammer_manual_<name>.sh
 ```
 
 You may find the results of your exploits in your `store_dir`, listed in `<model>.txt`.
@@ -323,17 +339,17 @@ To exploit given a right side aggressor, we can create a script based on either 
 - **store_dir:** Location to store your exploit results.
 
 ```bash
-bash ./data_scripts/fig12_t4/run_hammer_manual_<name>.sh
+bash ./data_scripts/fig13_t4/run_hammer_manual_<name>.sh
 ```
 
 You may find the results of your exploits in your `store_dir`, listed in `<model>.txt`.
 
 #### Exploit with Existing Bitflips
 
-The scripts in `./data_scripts/fig12_t4` will run the exploit on ImageNet models with specific bitflips we found in our A6000 GPU (B1, B2, D1, and D3). The model accuracy will be recorded in `./results/fig12_t4/<bitflip>`.
+The scripts in `./data_scripts/fig13_t4` will run the exploit on ImageNet models with specific bitflips we found in our A6000 GPU (B1, B2, D1, and D3). The model accuracy will be recorded in `./results/fig13_t4/<bitflip>`.
 
 ```bash
-bash ./data_scripts/fig12_t4/run_hammer_manual_<bitflip>.sh
+bash ./data_scripts/fig13_t4/run_hammer_manual_<bitflip>.sh
 ```
 
 This entire exploit with 4 bit-flips should take less than 1 day.

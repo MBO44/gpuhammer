@@ -26,17 +26,17 @@ if __name__ == "__main__":
 
     # Generate input and output directories
     HAMMER_ROOT = os.environ['HAMMER_ROOT']
-    INPUT_DIR = os.path.join(HAMMER_ROOT, "results", "fig12", "raw_files")
+    INPUT_DIR = os.path.join(HAMMER_ROOT, "results", "fig12", "raw_data")
     OUTPUT_DIR = os.path.join(HAMMER_ROOT, "results", "fig12")
     
-    bank_no = 256
+    bank_id = 'A'
     reps = 50
 
     # Read the data from the files
     x = list(range(8, 25))      # Test 8 to 24 sided patterns
     y = [0] * 17
     for num_agg in range(8, 25):
-        filename = os.path.join(INPUT_DIR, f"{num_agg}agg_b{bank_no}_count.txt")
+        filename = os.path.join(INPUT_DIR, f"{num_agg}agg_b{bank_id}_count.txt")
         y[num_agg - 8] = average_from_file(filename) / reps
 
     # Plot

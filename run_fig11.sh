@@ -1,3 +1,10 @@
+#!/bin/bash
+
+echo ""
+echo "-------------------------------------------"
+echo ""
+echo "[INFO] Starting Experiments for Figure 11"
+
 # Variables
 num_agg=24
 num_warp=8
@@ -16,7 +23,8 @@ num_rows=64169
 
 dum_rowid=1000
 
-banks=(256 2048 2048 2048 5120 6400 6400 6400)
+# banks=(256 2048 2048 2048 5120 6400 6400 6400)
+banks=(A B B B C D D D)
 flips=(30329 3543 13057 23029 4371 13635 21801 28498)
 delays=(55 58 58 58 58 57 57 57)
 vic_pos=(4 0 6 7 0 6 0 6)
@@ -29,7 +37,7 @@ for i in {0..7}; do
 # agg_period=55
 # dum_period=17
 
-    bank_offset=${banks[$i]}
+    bank_id=${banks[$i]}
     flip_row=${flips[$i]}
     delay=${delays[$i]}
 
@@ -39,7 +47,7 @@ for i in {0..7}; do
     min_rowid=$((flip_row - 94))
     max_rowid=$((flip_row + 5))
 
-    echo "Start hammering bank $bank_offset row $flip_row"
+    echo "Start hammering bank $bank_id row $flip_row"
 
     for j in {0..1}; do
 
@@ -56,6 +64,10 @@ for i in {0..7}; do
         for agg_period in 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100; do
 
             dum_period=1
+
+            # File paths
+            rowset_file="$HAMMER_ROOT/results/row_sets/ROW_SET_${bank_id}.txt"
+            log_file="$folder/agg${agg_period}_dum${dum_period}.log"
 
             # File paths
             rowset_file="$HAMMER_ROOT/results/row_sets/ROW_SET_${bank_offset}.txt"
@@ -78,3 +90,8 @@ for i in {0..7}; do
         done
     done
 done
+
+echo "[INFO] Generating Figure 11"
+python3 $HAMMER_ROOT/plot_scripts/plot_fig11.py
+
+echo "[INFO] Done. Figure 11 is stored as 'results/fig11/fig11.pdf'"

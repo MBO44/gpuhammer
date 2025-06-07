@@ -1,5 +1,5 @@
 # Variables
-bank_offset=6400
+bank_offset=D
 num_agg=24
 num_warp=8
 num_thread=3
@@ -14,7 +14,7 @@ count_iter=100
 addr_step=256
 iterations=91000
 
-store_dir=$HAMMER_ROOT/results/fig12_t4/D3
+store_dir=$HAMMER_ROOT/results/fig13_t4/D3
 mkdir -p $store_dir
 for model in alexnet vgg resnet dense inception; do
     echo "Processing $model"
@@ -32,7 +32,7 @@ for model in alexnet vgg resnet dense inception; do
         sleep 2
         nohup $HAMMER_ROOT/src/out/build/hammer_manual_agg_right $rowset_file $((num_agg - 1)) $addr_step $iterations $aggressor_row $max_rowid $row_step $shift $num_warp $num_thread $delay 1 $count_iter >/dev/null 2>&1 &
         sleep 5
-        python3 $HAMMER_ROOT/util/run_imagenet_models.py $model att D3 $HAMMER_ROOT/results/fig12_t4 $HAMMER_ROOT/src/out/build/liballoc.so $store_dir/${model}.txt
+        python3 $HAMMER_ROOT/util/run_imagenet_models.py $model att D3 $HAMMER_ROOT/results/fig13_t4 $HAMMER_ROOT/src/out/build/liballoc.so $store_dir/${model}.txt
         sleep 5
         > memory_control.txt
         sleep 5
