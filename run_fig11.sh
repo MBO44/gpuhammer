@@ -53,23 +53,28 @@ for i in {0..7}; do
             continue
         fi
 
-        for agg_period in {1..10}; do
-            for ((dum_period=1; dum_period<agg_period; dum_period++)); do
+        for agg_period in 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100; do
 
-                # File paths
-                rowset_file="$HAMMER_ROOT/results/row_sets/ROW_SET_${bank_offset}.txt"
-                log_file="$folder/agg${agg_period}_dum${dum_period}.log"
+            dum_period=1
 
-                bitflip_file="$folder/agg${agg_period}_dum${dum_period}_bitflip.txt"
+            # File paths
+            rowset_file="$HAMMER_ROOT/results/row_sets/ROW_SET_${bank_offset}.txt"
+            log_file="$folder/agg${agg_period}_dum${dum_period}.log"
 
-                echo "- Hammer Victim: $vic_pat, Aggressor: $agg_pat"
+            bitflip_file="$folder/agg${agg_period}_dum${dum_period}_bitflip.txt"
 
-                date > $log_file
-                $HAMMER_ROOT/src/out/build/trh  $rowset_file $((num_agg - 1)) $addr_step $iterations $min_rowid $max_rowid $dum_rowid $row_step $skip_step $mem_size $num_warp $num_thread $delay $round $count_iter $num_rows $vic_pat $agg_pat $agg_period $dum_period $bitflip_file >> $log_file
-                date >> $log_file
+            echo "- Hammer Victim: $vic_pat, Aggressor: $agg_pat"
 
-                sleep 3
-            done
+            date > $log_file
+            $HAMMER_ROOT/src/out/build/trh  $rowset_file $((num_agg - 1)) $addr_step $iterations $min_rowid $max_rowid $dum_rowid $row_step $skip_step $mem_size $num_warp $num_thread $delay $round $count_iter $num_rows $vic_pat $agg_pat $agg_period $dum_period $bitflip_file >> $log_file
+            date >> $log_file
+
+            sleep 3
+
+            if grep -q "Bit-flip detected!" "$log_file"; then
+                break
+            fi
+
         done
     done
 done

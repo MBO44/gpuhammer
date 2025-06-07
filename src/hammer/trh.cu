@@ -140,6 +140,15 @@ int main(int argc, char *argv[])
       std::cout << CLI_PREFIX << "Total time: " << duration_total.count() << " ms" << std::endl;
 
       std::cout << CLI_PREFIX << "==========================================================" << std::endl;
+
+      if (res) {  // Terminate if a bit-flip is observed
+        for (int i = 0; i < bitflip_count.size(); i++) {
+          bitflip_file << bitflip_count[i] << std::endl;
+        }
+        bitflip_file.close();
+
+        return 0;
+      }
     }
   }
 
