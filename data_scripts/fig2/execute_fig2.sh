@@ -1,1 +1,1 @@
-python3 $HAMMER_ROOT/util/run_timing_task.py load --size $((15 * (1 << 30))) --it 10 --step 256 --file $HAMMER_ROOT/results/fig2/LOAD_TIMING.txt
+python3 $HAMMER_ROOT/util/run_timing_task.py load --it 10 --step 256 --file $HAMMER_ROOT/results/fig2/LOAD_TIMING.txt

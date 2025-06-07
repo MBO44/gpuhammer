@@ -1,25 +1,19 @@
+#!/bin/bash
+
 mkdir -p $HAMMER_ROOT/results/fig5_6
 
-flag_reuse=false
+echo ""
+echo "-------------------------------------------"
+echo ""
+echo "[INFO] Starting Experiments for Figure 5 and 6"
 
-while [[ "$#" -gt 0 ]]; do
-  case $1 in
-    --reuse) flag_reuse=true ;;
-    *) echo "Unknown option: $1" ;;
-  esac
-  shift
-done
+bash $HAMMER_ROOT/data_scripts/fig5_6/execute_fig5_6.sh
 
-if ! $flag_reuse; then
-  echo "Force Re-running of Required Data"
-  bash $HAMMER_ROOT/data_scripts/fig5_6/execute_fig5_6.sh
-else
-  files=($HAMMER_ROOT/results/fig5_6/CONFLICT_TIMING.txt $HAMMER_ROOT/results/fig5_6/BASE_TIMING.txt)
+echo "[INFO] Generating Figure 5"
+python3 $HAMMER_ROOT/plot_scripts/plot_fig5a.py
+python3 $HAMMER_ROOT/plot_scripts/plot_fig5b.py
 
-  for file in "${files[@]}"; do
-  if [ ! -e "$file" ]; then
-    echo "Required Data DNE, Exiting..."
-    exit
-  fi
-  done
-fi
+echo "[INFO] Generating Figure 6"
+python3 $HAMMER_ROOT/plot_scripts/plot_fig6.py
+
+echo "[INFO] Done. Figure 5a, 5b, and 6 is stored in 'results/fig5_6/' as 'fig*.pdf'"

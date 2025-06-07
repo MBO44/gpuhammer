@@ -1,6 +1,13 @@
+#!/bin/bash
+
+echo ""
+echo "-------------------------------------------"
+echo ""
+echo "[INFO] Starting Experiments for Figure 12"
+
 # Variables
 agg_rowid=30327
-bank_id=256
+bank_id=A
 
 row_step=4
 count_iter=50
@@ -33,3 +40,8 @@ for num_agg in {8..24}; do
 
   sleep 5
 done
+
+echo "[INFO] Generating Figure 12"
+python3 $HAMMER_ROOT/plot_scripts/plot_fig12.py
+
+echo "[INFO] Done. Figure 12 is stored as 'results/fig12/fig12.pdf'"

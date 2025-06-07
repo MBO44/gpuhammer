@@ -2,8 +2,8 @@ import os
 import shutil
 
 HAMMER_ROOT = os.environ['HAMMER_ROOT']
-val_dir = f"{HAMMER_ROOT}/results/fig12_t4/val"  # Directory containing flat list of .JPEG files
-label_file = f"{HAMMER_ROOT}/results/fig12_t4/rand_val_labels.txt"
+val_dir = f"{HAMMER_ROOT}/results/fig13_t4/val"  # Directory containing flat list of .JPEG files
+label_file = f"{HAMMER_ROOT}/results/fig13_t4/rand_val_labels.txt"
 
 # Step 1: Read label file into a dict: filename -> synset
 desired_files = {}

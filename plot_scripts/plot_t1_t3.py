@@ -60,13 +60,15 @@ for bank_id in args.banks:
 # Convert to DataFrame
 df = pd.DataFrame(bitflips)
 
+t1_df = df
 # Plot Table 1 ...
-t1_df = (
-    df.groupby(['Bank', 'Num Aggressors'])['Row']
-    .nunique()
-    .unstack(fill_value=0)
-    .reindex(columns=args.num_aggs, fill_value=0)
-)
+if not df.empty:
+    t1_df = (
+        df.groupby(['Bank', 'Num Aggressors'])['Row']
+        .nunique()
+        .unstack(fill_value=0)
+        .reindex(columns=args.num_aggs, fill_value=0)
+    )
 
 # Create formatted table with multi-line header and aligned vertical bars
 lines = []
@@ -77,7 +79,7 @@ banks = list(t1_df.index)
 col_width = 4
 header_title = "n-Sided Patterns"
 bank_col = "Bank"
-header_line1 = f"{bank_col:<{col_width}} | {header_title:^{len(aggs) * 5 - 2}}"
+header_line1 = f"{bank_col:<{col_width}} | {header_title:^{(len(aggs) * 5 - 2) if len(aggs) != 0 else 0}}"
 header_line2 = f"{'':<{col_width}} | " + " ".join(f"{agg:^5}" for agg in aggs)
 
 lines.append(header_line1)

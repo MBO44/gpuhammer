@@ -2,7 +2,7 @@
 # Run the synchronization test
 
 # Variables
-bank_id=256
+bank_id=A
 
 num_agg=24          # Number of aggressors
 num_warp=8          # Number of warps

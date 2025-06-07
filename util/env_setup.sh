@@ -25,3 +25,4 @@ fi
 python3 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 python3 -m pip install matplotlib
 python3 -m pip install scipy
+python3 -m pip install pandas
