@@ -70,7 +70,7 @@ for i in {0..7}; do
             log_file="$folder/agg${agg_period}_dum${dum_period}.log"
 
             # File paths
-            rowset_file="$HAMMER_ROOT/results/row_sets/ROW_SET_${bank_offset}.txt"
+            rowset_file="$HAMMER_ROOT/results/row_sets/ROW_SET_${bank_id}.txt"
             log_file="$folder/agg${agg_period}_dum${dum_period}.log"
 
             bitflip_file="$folder/agg${agg_period}_dum${dum_period}_bitflip.txt"
