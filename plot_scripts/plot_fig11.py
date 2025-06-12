@@ -16,7 +16,7 @@ def average_from_file(filename: str) -> float:
 def find_min_ratio(input_dir: str) -> float:
     min_ratio = 1
 
-    for agg in range(110):
+    for agg in range(101):
         for dum in range(100):
             filename = os.path.join(input_dir, f'agg{agg}_dum{dum}_bitflip.txt')
             if average_from_file(filename) > 0:
@@ -53,10 +53,10 @@ if __name__ == "__main__":
     HAMMER_ROOT = os.environ['HAMMER_ROOT']
     OUTPUT_DIR = os.path.join(HAMMER_ROOT, "results", "fig11")
 
-    act_per_trefi = 16.375       # 16.375K activations per tREFI
+    act_per_trefi = 16.384       # 2^14 activations per tREFI
 
     for i in range(len(flip_names)):
-        INPUT_DIR = os.path.join(HAMMER_ROOT, "results", "fig11", str(i))
+        INPUT_DIR = os.path.join(HAMMER_ROOT, "results", "fig11", flip_names[i])
 
         min_ratio = find_min_ratio(INPUT_DIR)
         trh[i] = min_ratio * act_per_trefi
