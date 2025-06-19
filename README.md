@@ -112,7 +112,7 @@ The results of the campaign `run_t1_t3.sh` are stored in `./results/campaign` an
 
 The results of the exploit (Figure 13 and Table 4) are in `./results/fig13_t4/fig13.pdf` and`./results/fig13_t4/t4.txt`
 
-
+**NOTE:** We additionally provide sample outputs of all experiments in the folder `./results/sample`.
 
 ## Detailed Instructions for Building the Artifact
 
