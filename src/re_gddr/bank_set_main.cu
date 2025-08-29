@@ -35,9 +35,9 @@ int
 main (int argc, char *argv[])
 {
   uint64_t size = std::stoull (argv[1]);
-  uint64_t range = std::stoull (argv[2]);
-  uint64_t it = std::stoull (argv[3]);
-  uint64_t step = std::stoull (argv[4]);
+  uint64_t range = std::stoull (argv[1]);
+  uint64_t it = std::stoull (argv[2]);
+  uint64_t step = std::stoull (argv[3]);
   uint64_t threshold = std::stoull (argv[4]);
   uint64_t max_bank = std::stoull (argv[5]);
   auto banks_filename = argv[6];
