@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
   const uint64_t period     = std::stoull(argv[13]);
   const uint64_t count_iter = std::stoull(argv[14]);
   const uint64_t num_rows   = std::stoull(argv[15]);
-  const uint64_t vic_pat    = std::stoull(argv[16], nullptr, 16);
+  const uint64_t vic_pat    = std::stoull(argv[16], 0, 16);//nullptr
   const uint64_t agg_pat    = std::stoull(argv[17], nullptr, 16);
   std::ofstream bitflip_file(argv[18]);
 
